@@ -1,26 +1,257 @@
+/**
+ * =================================================================
+ * TAILWIND CSS CONFIGURATION
+ * =================================================================
+ * Refined for "Moniley" Brand Identity
+ * Palette: Deep Navy, Electric Cyan, and Mint Green
+ */
+
+/* =================================================================
+   IMPORTS
+   ================================================================= */
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* =================================================================
+   CUSTOM VARIANTS
+   ================================================================= */
+@custom-variant dark (&:is(.dark *));
 
+/* =================================================================
+   THEME CONFIGURATION
+   ================================================================= */
 @theme inline {
+  /* Border Radius Scale */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Core Colors */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  /* Card Colors */
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  /* Popover Colors */
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  /* Primary Colors */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  /* Secondary Colors */
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  /* Muted Colors */
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  /* Accent Colors */
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  /* Semantic Colors */
+  --color-destructive: var(--destructive);
+
+  /* UI Element Colors */
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Chart Colors */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Sidebar Colors */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* =================================================================
+   LIGHT MODE
+   ================================================================= */
+:root {
+  /* Base Configuration */
+  --radius: 0.625rem;
+
+  /* * Base Palette: Clean White & Deep Navy Text
+   * The "Moniley" text is white on blue, so we reverse for light mode.
+   */
+  --background: oklch(0.99 0 0);      /* Pure White */
+  --foreground: oklch(0.20 0.09 265); /* Deep Navy Blue (Text) */
+
+  /* Surface Colors */
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.20 0.09 265);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.20 0.09 265);
+
+  /* * Interactive Colors 
+   * Primary: The Logo's Deep Blue Ring (Authoritative)
+   * Secondary: A soft Mint Green wash (Growth)
+   */
+  --primary: oklch(0.35 0.15 265);    /* Logo Deep Blue */
+  --primary-foreground: oklch(1 0 0); /* White Text */
+  
+  --secondary: oklch(0.96 0.04 160);  /* Very Pale Mint */
+  --secondary-foreground: oklch(0.35 0.15 265);
+
+  /* Utility Colors */
+  --muted: oklch(0.96 0.02 265);      /* Pale Blue-Grey */
+  --muted-foreground: oklch(0.55 0.05 265);
+
+  /* Accent: A soft Cyan wash */
+  --accent: oklch(0.95 0.05 240); 
+  --accent-foreground: oklch(0.35 0.15 265);
+
+  /* Semantic Colors */
+  --destructive: oklch(0.577 0.245 27.325);
+
+  /* Border & Input - Cool Greys */
+  --border: oklch(0.92 0.02 265);
+  --input: oklch(0.92 0.02 265);
+  --ring: oklch(0.35 0.15 265);       /* Match Primary */
+
+  /* Data Visualization - Logo Gradient Colors */
+  --chart-1: oklch(0.35 0.15 265);    /* Deep Blue */
+  --chart-2: oklch(0.60 0.18 240);    /* Logo Cyan */
+  --chart-3: oklch(0.70 0.18 160);    /* Logo Mint Green */
+  --chart-4: oklch(0.50 0.15 200);    /* Teal */
+  --chart-5: oklch(0.85 0.10 240);    /* Light Blue */
+
+  /* Sidebar Component */
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.20 0.09 265);
+  --sidebar-primary: oklch(0.35 0.15 265);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.96 0.04 160);
+  --sidebar-accent-foreground: oklch(0.35 0.15 265);
+  --sidebar-border: oklch(0.92 0.02 265);
+  --sidebar-ring: oklch(0.35 0.15 265);
+}
+
+/* =================================================================
+   DARK MODE
+   ================================================================= */
+.dark {
+  /* * Core Colors 
+   * Background is now the Deep Navy from the logo ring.
+   * Text is white/off-white.
+   */
+  --background: oklch(0.12 0.06 265); /* Very Dark Navy */
+  --foreground: oklch(0.98 0.01 240); /* Cool White */
+
+  /* Surface Colors - Slightly lighter Navy */
+  --card: oklch(0.16 0.07 265);
+  --card-foreground: oklch(0.98 0.01 240);
+  --popover: oklch(0.16 0.07 265);
+  --popover-foreground: oklch(0.98 0.01 240);
+
+  /* * Interactive Colors
+   * Primary: The Bright Mint Green arrow (High visibility against dark bg)
+   * Secondary: The Cyan/Blue gradient tone
+   */
+  --primary: oklch(0.70 0.18 160);    /* Logo Mint Green (Glows on dark) */
+  --primary-foreground: oklch(0.12 0.06 265); /* Dark Text on Green */
+  
+  --secondary: oklch(0.25 0.10 265);  /* Mid-tone Navy */
+  --secondary-foreground: oklch(0.98 0.01 240);
+
+  /* Utility Colors */
+  --muted: oklch(0.25 0.08 265);
+  --muted-foreground: oklch(0.70 0.05 265);
+  
+  --accent: oklch(0.25 0.10 240);     /* Dark Cyan wash */
+  --accent-foreground: oklch(0.98 0 0);
+
+  /* Semantic Colors */
+  --destructive: oklch(0.65 0.22 25);
+
+  /* Border & Input */
+  --border: oklch(0.98 0 0 / 10%);
+  --input: oklch(0.98 0 0 / 15%);
+  --ring: oklch(0.70 0.18 160);       /* Match Primary Mint */
+
+  /* Data Visualization - Adjusted for Dark Mode contrast */
+  --chart-1: oklch(0.60 0.18 240);    /* Logo Cyan */
+  --chart-2: oklch(0.70 0.18 160);    /* Logo Mint Green */
+  --chart-3: oklch(0.45 0.15 265);    /* Lighter Blue */
+  --chart-4: oklch(0.65 0.20 300);    /* Purple (Complementary) */
+  --chart-5: oklch(0.80 0.15 200);    /* Light Teal */
+
+  /* Sidebar Component */
+  --sidebar: oklch(0.14 0.07 265);
+  --sidebar-foreground: oklch(0.98 0.01 240);
+  --sidebar-primary: oklch(0.70 0.18 160); /* Mint Green */
+  --sidebar-primary-foreground: oklch(0.12 0.06 265);
+  --sidebar-accent: oklch(0.25 0.10 265);
+  --sidebar-accent-foreground: oklch(0.98 0.01 240);
+  --sidebar-border: oklch(0.98 0 0 / 10%);
+  --sidebar-ring: oklch(0.70 0.18 160);
+}
+
+/* =================================================================
+   BASE LAYER STYLES
+   ================================================================= */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100svh;
+  }
+
+  /* Form elements inherit font */
+  input,
+  button,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  /* Prevent text overflow */
+  p,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    overflow-wrap: break-word;
+  }
+
+  /* Media defaults */
+  img,
+  picture,
+  video,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
 }
