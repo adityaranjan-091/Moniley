@@ -109,10 +109,11 @@ export async function GET(req) {
         const colorMap = {};
         categoryDocs.forEach(c => colorMap[c.name] = c.color);
 
-        const categoryBreakdown = Object.entries(categoryMap).map(([name, value]) => ({
+        const fallbackColors = ["#8b5cf6", "#ec4899", "#f59e0b", "#3b82f6", "#10b981", "#ef4444", "#6366f1"];
+        const categoryBreakdown = Object.entries(categoryMap).map(([name, value], index) => ({
             name,
             value,
-            color: colorMap[name] || "#8884d8"
+            color: colorMap[name] || fallbackColors[index % fallbackColors.length]
         })).sort((a, b) => b.value - a.value);
 
         return NextResponse.json({
@@ -128,6 +129,6 @@ export async function GET(req) {
 
     } catch (error) {
         console.error("GET /api/reports error:", error);
-        return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
+        return NextResponse.json({ success: false, message: "Server error", debug: error.message, stack: error.stack }, { status: 500 });
     }
 }

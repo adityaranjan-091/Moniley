@@ -197,8 +197,18 @@ export default function ReportsPage() {
                             </CardHeader>
                             <CardContent className="pl-2">
                                 <div className="h-[350px] w-full">
-                                    <ResponsiveContainer width="100%" height="100%">
+                                    <ResponsiveContainer width="100%" height={350}>
                                         <BarChart data={data.chartData}>
+                                            <defs>
+                                                <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                                                    <stop offset="95%" stopColor="#10b981" stopOpacity={0.2}/>
+                                                </linearGradient>
+                                                <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.8}/>
+                                                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0.2}/>
+                                                </linearGradient>
+                                            </defs>
                                             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" vertical={false} />
                                             <XAxis
                                                 dataKey="name"
@@ -219,8 +229,8 @@ export default function ReportsPage() {
                                                 contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
                                             />
                                             <Legend />
-                                            <Bar dataKey="income" fill="#10b981" radius={[4, 4, 0, 0]} name="Income" />
-                                            <Bar dataKey="expense" fill="#f43f5e" radius={[4, 4, 0, 0]} name="Expense" />
+                                            <Bar dataKey="income" fill="url(#colorIncome)" radius={[4, 4, 0, 0]} name="Income" />
+                                            <Bar dataKey="expense" fill="url(#colorExpense)" radius={[4, 4, 0, 0]} name="Expense" />
                                         </BarChart>
                                     </ResponsiveContainer>
                                 </div>
@@ -240,7 +250,7 @@ export default function ReportsPage() {
                                             No expenses recorded.
                                         </div>
                                     ) : (
-                                        <ResponsiveContainer width="100%" height="100%">
+                                        <ResponsiveContainer width="100%" height={350}>
                                             <PieChart>
                                                 <Pie
                                                     data={data.categoryBreakdown}

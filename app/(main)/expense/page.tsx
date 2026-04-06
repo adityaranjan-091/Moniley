@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useSession } from "next-auth/react";
 
 type Expense = {
@@ -20,14 +21,17 @@ export default function ExpensePage() {
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("Uncategorized");
+  const [categoriesList, setCategoriesList] = useState<{_id: string, name: string}[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isCategorizing, setIsCategorizing] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (session?.user?.email) {
       fetchExpenses();
+      fetchCategories();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session]);
@@ -47,6 +51,54 @@ export default function ExpensePage() {
       console.error("Failed to load expenses");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchCategories() {
+    try {
+      const res = await fetch(
+        `/api/categories?userId=${encodeURIComponent(
+          session?.user?.email || ""
+        )}&type=expense`
+      );
+      const json = await res.json();
+      if (json.success) setCategoriesList(json.categories || []);
+    } catch (err) {
+      console.error("Failed to load categories");
+    }
+  }
+
+  async function handleSmartCategorize() {
+    if (!description) {
+      alert("Please enter a sentence in Description (e.g. 'Bought a coffee for 150') first.");
+      return;
+    }
+    try {
+      setIsCategorizing(true);
+      const res = await fetch("/api/smart-categorize", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          text: description,
+          type: "expense",
+          userId: session?.user?.email,
+        }),
+      });
+      const json = await res.json();
+      if (json.success && json.data) {
+        if (json.data.amount) setAmount(String(json.data.amount));
+        if (json.data.category) setCategory(json.data.category);
+        if (json.data.date) setDate(json.data.date);
+        if (json.data.description && json.data.description !== "Uncategorized") {
+          setDescription(json.data.description);
+        }
+      } else {
+        alert(json.message || "Failed to auto-categorize");
+      }
+    } catch (err) {
+      alert("Error calling smart categorization");
+    } finally {
+      setIsCategorizing(false);
     }
   }
 
@@ -77,7 +129,7 @@ export default function ExpensePage() {
         setExpenses((prev) => [json.transaction, ...prev]);
         setDescription("");
         setAmount("");
-        setCategory("");
+        setCategory("Uncategorized");
         setMessage("Expense added successfully");
         setTimeout(() => setMessage(null), 3000);
       } else {
@@ -119,11 +171,23 @@ export default function ExpensePage() {
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Description</label>
+            <div className="flex items-center justify-between mb-1">
+              <label className="block text-sm font-medium">Description</label>
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="sm" 
+                className="h-6 text-xs px-2 text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20" 
+                onClick={handleSmartCategorize} 
+                disabled={isCategorizing || !description}
+              >
+                 {isCategorizing ? "Thinking..." : "✨ Auto-fill"}
+              </Button>
+            </div>
             <Input
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="e.g. Grocery run"
+              placeholder="e.g. Bought 2 coffees for 150 yesterday"
             />
           </div>
           <div>
@@ -141,11 +205,19 @@ export default function ExpensePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">Category</label>
-            <Input
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="e.g. Food, Transport"
-            />
+            <Select value={category} onValueChange={setCategory}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Uncategorized">Uncategorized</SelectItem>
+                {categoriesList.map((c) => (
+                  <SelectItem key={c._id} value={c.name}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Date</label>

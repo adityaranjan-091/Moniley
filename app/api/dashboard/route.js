@@ -84,10 +84,11 @@ export async function GET(req) {
         const colorMap = {};
         categoryDocs.forEach(c => colorMap[c.name] = c.color);
 
-        const expenseBreakdown = Object.entries(expenseMap).map(([name, value]) => ({
+        const fallbackColors = ["#8b5cf6", "#ec4899", "#f59e0b", "#3b82f6", "#10b981", "#ef4444", "#6366f1"];
+        const expenseBreakdown = Object.entries(expenseMap).map(([name, value], index) => ({
             name,
             value,
-            color: colorMap[name] || "#8884d8" // Default color if not found
+            color: colorMap[name] || fallbackColors[index % fallbackColors.length]
         })).sort((a, b) => b.value - a.value); // Sort highest expense first
 
 
