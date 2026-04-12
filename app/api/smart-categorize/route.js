@@ -19,18 +19,19 @@ export async function POST(req) {
         const categories = await db.collection("categories").find({ userId, type }).toArray();
 
         // Pluck the names
-        const categoryNames = categories.length > 0 ? categories.map(c => c.name) : ["Uncategorized"];
+        const categoryNames = categories.length > 0 ? categories.map(c => c.name) : [];
+        const categoriesText = categoryNames.length > 0 ? categoryNames.join(", ") : "None configured yet.";
 
         // Format prompt for Gemini
         const prompt = `You are a financial categorizer.
 Analyze this user input describing a transaction: "${text}"
 The transaction type is: "${type}".
-The available categories the user has configured are: ${categoryNames.join(", ")}.
+The available categories the user has configured are: ${categoriesText}.
 
 Extract the relevant information and return a strict JSON object with these keys:
 - "amount": Number representing the parsed amount. Return 0 if not found. Do not include currency symbols.
 - "description": A short cleaned-up description of the transaction (e.g. "Pizza" instead of "Bought 3 pizzas").
-- "category": The closest matching category from the available categories list. If none fit well, use the best generic guess from the list, or "Uncategorized" if completely ambiguous.
+- "category": Assign the closest matching category from the available categories list. If none fit perfectly, invent a new, logical, short category name (e.g., "Transportation", "Dining Out", "Freelance"). Do NOT use "Uncategorized". Ensure the format is Title Case.
 - "date": The date mentioned or implied, in YYYY-MM-DD format. If no date is mentioned, use today's date (${new Date().toISOString().slice(0, 10)}).
 
 Ensure your response is valid JSON and nothing else. Do not use markdown wrappers.`;

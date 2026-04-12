@@ -1,78 +1,111 @@
 import Link from "next/link";
 import React from "react";
 import ThemeToggle from "../components/ThemeToggle";
+import { ArrowRight, Shield, Zap, Wallet, PieChart, TrendingUp } from "lucide-react";
 
-const Home = () => {
+export default function Home() {
   return (
-    <div className="relative flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">
-      {/* Theme Toggle - Positioned absolutely */}
-      <div className="absolute top-6 right-6">
-        <ThemeToggle />
-      </div>
+    <div className="relative min-h-screen overflow-hidden bg-background selection:bg-primary/30">
+      {/* Background Glowing Orbs */}
+      <div className="absolute top-0 -left-20 w-96 h-96 bg-primary/20 rounded-full mix-blend-screen filter blur-[100px] opacity-70" />
+      <div className="absolute top-40 -right-20 w-96 h-96 bg-chart-3/20 rounded-full mix-blend-screen filter blur-[100px] opacity-70" />
+      <div className="absolute -bottom-32 left-1/3 w-96 h-96 bg-secondary/30 rounded-full mix-blend-screen filter blur-[100px] opacity-70" />
+      
+      <div className="relative z-10 flex flex-col min-h-screen">
+        {/* Navigation / Header */}
+        <header className="flex items-center justify-between px-6 py-6 max-w-7xl mx-auto w-full">
+          <div className="flex items-center gap-2">
+            <div className="size-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+              <Wallet className="size-5 text-primary-foreground" />
+            </div>
+            <span className="text-xl font-bold tracking-tight text-foreground">Moniley</span>
+          </div>
+          <div className="flex items-center gap-6">
+            <ThemeToggle />
+            <Link
+              href="/login"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block"
+            >
+              Sign In
+            </Link>
+          </div>
+        </header>
 
-      {/* Main Content */}
-      <main className="flex flex-col items-center justify-center gap-8 px-4 text-center">
         {/* Hero Section */}
-        <div className="space-y-4">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white tracking-tight transition-colors duration-300">
-            Welcome to{" "}
-            <span className="text-blue-600 dark:text-blue-400">Your App</span>
+        <main className="flex-grow flex flex-col items-center justify-center pt-16 pb-32 px-4 text-center">
+          <div className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-sm font-medium text-primary mb-8 backdrop-blur-sm transition-all hover:bg-primary/20 cursor-default">
+            <span className="flex h-2 w-2 rounded-full bg-primary mr-2 shadow-[0_0_8px_rgba(var(--primary),0.8)]"></span>
+            Moniley is now in Beta
+          </div>
+          
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-foreground max-w-4xl mb-6 leading-[1.1]">
+            Master your money with{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-chart-3">
+              Moniley
+            </span>
           </h1>
-          <p className="text-lg md:text-xl text-gray-600 dark:text-gray-300 max-w-2xl transition-colors duration-300">
-            Get started by creating an account or logging in to access your
-            dashboard
+          
+          <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mb-10 leading-relaxed font-medium">
+            The intelligent financial dashboard that helps you track expenses, analyze spending habits, and grow your wealth seamlessly.
           </p>
-        </div>
 
-        {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 mt-8">
-          <Link
-            href="/signup"
-            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50"
-          >
-            Get Started
-          </Link>
-          <Link
-            href="/login"
-            className="px-8 py-3 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold rounded-lg shadow-lg transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-gray-500 focus:ring-opacity-50"
-          >
-            Login
-          </Link>
-        </div>
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+            <Link
+              href="/signup"
+              className="group flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-primary px-8 py-4 text-sm font-semibold text-primary-foreground shadow-xl shadow-primary/25 transition-all hover:scale-105 active:scale-95"
+            >
+              Start for free
+              <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+            </Link>
+            <Link
+              href="/login"
+              className="group flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-secondary/50 backdrop-blur-md border border-border px-8 py-4 text-sm font-semibold text-secondary-foreground shadow-sm transition-all hover:bg-secondary/80 hover:scale-105 active:scale-95"
+            >
+              Log in to Dashboard
+            </Link>
+          </div>
 
-        {/* Feature Highlights */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 max-w-4xl">
-          <div className="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300">
-            <div className="text-3xl mb-3">⚡</div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              Fast
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Lightning-fast performance and seamless experience
-            </p>
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-32 max-w-6xl w-full px-4 text-left">
+            <FeatureCard 
+              icon={<Zap className="size-6 text-chart-2" />}
+              title="Lightning Fast"
+              description="Instantly view your financial data with a dashboard that loads in milliseconds, keeping you focused exactly on what matters."
+            />
+            <FeatureCard 
+              icon={<PieChart className="size-6 text-primary" />}
+              title="Smart Analytics"
+              description="Visual breakdowns of your expenses help you understand exactly where your money goes with vibrant interactive charts."
+            />
+            <FeatureCard 
+              icon={<Shield className="size-6 text-chart-4" />}
+              title="Bank-grade Security"
+              description="Your financial data is encrypted and securely stored. We prioritize your privacy and never share your personal information."
+            />
           </div>
-          <div className="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300">
-            <div className="text-3xl mb-3">🔒</div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              Secure
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Your data is protected with enterprise-grade security
-            </p>
-          </div>
-          <div className="p-6 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-300">
-            <div className="text-3xl mb-3">🚀</div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              Modern
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
-              Built with the latest technologies and best practices
-            </p>
-          </div>
-        </div>
-      </main>
+        </main>
+        
+        <footer className="mt-auto py-8 text-center text-sm text-muted-foreground bg-background/50 backdrop-blur-sm border-t border-border/50">
+           <p>© {new Date().getFullYear()} Moniley. All rights reserved.</p>
+        </footer>
+      </div>
     </div>
   );
-};
+}
 
-export default Home;
+function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
+  return (
+    <div className="group relative overflow-hidden rounded-3xl border border-border/60 bg-card/40 backdrop-blur-xl p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30">
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="relative z-10">
+        <div className="mb-6 inline-flex rounded-2xl bg-background/80 p-4 shadow-sm border border-border/50 transition-transform duration-300 group-hover:scale-110 group-hover:bg-background">
+          {icon}
+        </div>
+        <h3 className="mb-3 text-xl font-bold text-card-foreground">{title}</h3>
+        <p className="text-sm text-muted-foreground leading-relaxed font-medium">
+          {description}
+        </p>
+      </div>
+    </div>
+  );
+}

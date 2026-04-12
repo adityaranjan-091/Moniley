@@ -71,7 +71,7 @@ export default function DashboardPage() {
 
     return (
         <div className="space-y-8">
-            <h1 className="text-3xl font-bold">Financial Overview</h1>
+            <h1 className="text-3xl font-bold">Welcome to Moniley</h1>
 
             {/* Top Cards */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -157,7 +157,7 @@ export default function DashboardPage() {
                                             ))}
                                         </Pie>
                                         <Tooltip
-                                            formatter={(value: number | undefined) => `₹${value?.toLocaleString() ?? 0}`}
+                                            formatter={(value: any) => `₹${Number(value)?.toLocaleString() ?? 0}`}
                                         />
                                         <Legend />
                                     </PieChart>

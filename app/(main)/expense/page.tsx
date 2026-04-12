@@ -19,9 +19,10 @@ type Expense = {
 export default function ExpensePage() {
   const { data: session } = useSession();
   const [description, setDescription] = useState("");
+  const [smartInput, setSmartInput] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
-  const [category, setCategory] = useState("Uncategorized");
+  const [category, setCategory] = useState("");
   const [categoriesList, setCategoriesList] = useState<{_id: string, name: string}[]>([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(false);
@@ -69,8 +70,8 @@ export default function ExpensePage() {
   }
 
   async function handleSmartCategorize() {
-    if (!description) {
-      alert("Please enter a sentence in Description (e.g. 'Bought a coffee for 150') first.");
+    if (!smartInput) {
+      alert("Please enter a sentence describing the expense first.");
       return;
     }
     try {
@@ -79,7 +80,7 @@ export default function ExpensePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          text: description,
+          text: smartInput,
           type: "expense",
           userId: session?.user?.email,
         }),
@@ -118,7 +119,7 @@ export default function ExpensePage() {
           userId: session?.user?.email,
           type: "expense",
           amount: Number(amount),
-          category: category || "Uncategorized",
+          category,
           description,
           date,
         }),
@@ -129,7 +130,7 @@ export default function ExpensePage() {
         setExpenses((prev) => [json.transaction, ...prev]);
         setDescription("");
         setAmount("");
-        setCategory("Uncategorized");
+        setCategory("");
         setMessage("Expense added successfully");
         setTimeout(() => setMessage(null), 3000);
       } else {
@@ -166,24 +167,45 @@ export default function ExpensePage() {
       <h1 className="text-2xl font-semibold mb-4 text-foreground">Expenses</h1>
 
       <form
-        className="grid grid-cols-1 gap-4 mb-8 bg-card p-6 rounded-xl border shadow-sm"
+        className="grid grid-cols-1 gap-6 mb-8 bg-card p-6 rounded-xl border shadow-sm"
         onSubmit={handleAdd}
       >
+        {/* AI Smart Entry Block */}
+        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 p-4 rounded-xl border border-indigo-200 dark:border-indigo-800/50">
+          <label className="block text-sm font-medium text-indigo-800 dark:text-indigo-300 mb-3 flex items-center gap-2">
+            ✨ AI Smart Entry
+          </label>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Input
+              placeholder="e.g., Bought 2 coffees for ₹150 yesterday"
+              value={smartInput}
+              onChange={(e) => setSmartInput(e.target.value)}
+              className="bg-white/80 dark:bg-background/80 border-indigo-200 dark:border-indigo-800/50 focus-visible:ring-indigo-500 shadow-inner"
+            />
+            <Button 
+              type="button" 
+              className="bg-indigo-600 hover:bg-indigo-700 text-white whitespace-nowrap min-w-[130px] shadow-sm transition-all shadow-indigo-600/20" 
+              onClick={handleSmartCategorize} 
+              disabled={isCategorizing || !smartInput}
+            >
+              {isCategorizing ? "Thinking..." : "Auto-fill Form"}
+            </Button>
+          </div>
+          <p className="text-xs text-indigo-600/80 dark:text-indigo-400/70 mt-2.5 font-medium tracking-tight">Just type what happened, and we'll automatically fill out the form below.</p>
+        </div>
+
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <span className="w-full border-t border-muted/50" />
+          </div>
+          <div className="relative flex justify-center text-[10px] font-semibold uppercase tracking-wider">
+            <span className="bg-card px-3 text-muted-foreground">Or Enter Manually</span>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <div className="flex items-center justify-between mb-1">
-              <label className="block text-sm font-medium">Description</label>
-              <Button 
-                type="button" 
-                variant="ghost" 
-                size="sm" 
-                className="h-6 text-xs px-2 text-indigo-500 hover:text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/20" 
-                onClick={handleSmartCategorize} 
-                disabled={isCategorizing || !description}
-              >
-                 {isCategorizing ? "Thinking..." : "✨ Auto-fill"}
-              </Button>
-            </div>
+            <label className="block text-sm font-medium mb-1">Description</label>
             <Input
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -205,19 +227,17 @@ export default function ExpensePage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">Category</label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Uncategorized">Uncategorized</SelectItem>
-                {categoriesList.map((c) => (
-                  <SelectItem key={c._id} value={c.name}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Input
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder="e.g. Dining Out"
+              list="expense-categories"
+            />
+            <datalist id="expense-categories">
+              {categoriesList.map((c) => (
+                <option key={c._id} value={c.name} />
+              ))}
+            </datalist>
           </div>
           <div>
             <label className="block text-sm font-medium mb-1">Date</label>

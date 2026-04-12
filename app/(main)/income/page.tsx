@@ -21,10 +21,11 @@ export default function IncomePage() {
   const { data: session } = useSession();
   const [amount, setAmount] = useState("");
   const [source, setSource] = useState(""); // Will map to 'description'
+  const [smartInput, setSmartInput] = useState("");
   const [date, setDate] = useState<string>(
     new Date().toISOString().slice(0, 10)
   );
-  const [category, setCategory] = useState("Uncategorized");
+  const [category, setCategory] = useState("");
   const [categoriesList, setCategoriesList] = useState<{_id: string, name: string}[]>([]);
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
@@ -71,8 +72,8 @@ export default function IncomePage() {
   }
 
   async function handleSmartCategorize() {
-    if (!source) {
-      alert("Please enter a sentence in Source (e.g. 'Got ₹5000 from freelancing') first.");
+    if (!smartInput) {
+      alert("Please enter a sentence describing the income first.");
       return;
     }
     try {
@@ -81,7 +82,7 @@ export default function IncomePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          text: source,
+          text: smartInput,
           type: "income",
           userId: session?.user?.email,
         }),
@@ -134,7 +135,7 @@ export default function IncomePage() {
         setAmount("");
         setSource("");
         setNotes("");
-        setCategory("Uncategorized");
+        setCategory("");
         setMessage("Income added");
         setTimeout(() => setMessage(null), 3000);
       } else {
@@ -166,22 +167,43 @@ export default function IncomePage() {
       <h1 className="text-2xl font-semibold mb-4 text-foreground">Add Income</h1>
 
       <div className="mb-6 bg-card border rounded-xl p-6 shadow-sm">
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6">
+          {/* AI Smart Entry Block */}
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 p-4 rounded-xl border border-green-200 dark:border-green-800/50">
+            <label className="block text-sm font-medium text-green-800 dark:text-green-300 mb-3 flex items-center gap-2">
+              ✨ AI Smart Entry
+            </label>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Input
+                placeholder="e.g., Received my salary of ₹80000 yesterday"
+                value={smartInput}
+                onChange={(e) => setSmartInput(e.target.value)}
+                className="bg-white/80 dark:bg-background/80 border-green-200 dark:border-green-800/50 focus-visible:ring-green-500 shadow-inner"
+              />
+              <Button 
+                type="button" 
+                className="bg-green-600 hover:bg-green-700 text-white whitespace-nowrap min-w-[130px] shadow-sm transition-all shadow-green-600/20" 
+                onClick={handleSmartCategorize} 
+                disabled={isCategorizing || !smartInput}
+              >
+                {isCategorizing ? "Thinking..." : "Auto-fill Form"}
+              </Button>
+            </div>
+            <p className="text-xs text-green-600/80 dark:text-green-400/70 mt-2.5 font-medium tracking-tight">Just type what happened, and we'll automatically fill out the form below.</p>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t border-muted/50" />
+            </div>
+            <div className="relative flex justify-center text-[10px] font-semibold uppercase tracking-wider">
+              <span className="bg-card px-3 text-muted-foreground">Or Enter Manually</span>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium">Source</label>
-                <Button 
-                  type="button" 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-6 text-xs px-2 text-green-600 hover:text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20" 
-                  onClick={handleSmartCategorize} 
-                  disabled={isCategorizing || !source}
-                >
-                   {isCategorizing ? "Thinking..." : "✨ Auto-fill"}
-                </Button>
-              </div>
+              <label className="block text-sm font-medium mb-1">Source</label>
               <Input
                 placeholder="e.g., Salary, Freelance"
                 value={source}
@@ -203,19 +225,17 @@ export default function IncomePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">Category</label>
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Uncategorized">Uncategorized</SelectItem>
-                  {categoriesList.map((c) => (
-                    <SelectItem key={c._id} value={c.name}>
-                      {c.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Input
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                placeholder="e.g. Freelance"
+                list="income-categories"
+              />
+              <datalist id="income-categories">
+                {categoriesList.map((c) => (
+                  <option key={c._id} value={c.name} />
+                ))}
+              </datalist>
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Date</label>

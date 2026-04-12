@@ -59,15 +59,9 @@ export default function GeneralSettingsPage() {
                         <SelectValue placeholder="Select Currency" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="INR">ABC (₹)</SelectItem>
-                        <SelectItem value="USD">USD ($)</SelectItem>
-                        <SelectItem value="EUR">EUR (€)</SelectItem>
-                        <SelectItem value="GBP">GBP (£)</SelectItem>
+                        <SelectItem value="INR">RS (₹)</SelectItem>
                     </SelectContent>
                 </Select>
-                <p className="text-[0.8rem] text-muted-foreground">
-                    Note: This is for display purposes only. Actual conversion is not supported yet.
-                </p>
             </div>
         </div>
     );

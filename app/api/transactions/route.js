@@ -26,11 +26,31 @@ export async function POST(req) {
         const client = await clientPromise;
         const db = client.db();
 
+        const categoryName = category || "Other";
+
+        // Auto-create category if it doesn't exist
+        const existingCategory = await db.collection("categories").findOne({
+            userId,
+            name: categoryName,
+            type
+        });
+
+        if (!existingCategory) {
+            await db.collection("categories").insertOne({
+                userId,
+                name: categoryName,
+                type,
+                color: type === "income" ? "#10b981" : "#8b5cf6", // Default colours
+                icon: type === "income" ? "📈" : "📉",
+                createdAt: new Date(),
+            });
+        }
+
         const transaction = {
             userId,
             type, // 'income' or 'expense'
             amount: Number(amount),
-            category: category || "Uncategorized",
+            category: categoryName,
             description: description || "", // Unified field for Source/Description
             notes: notes || "",
             date: date ? new Date(date) : new Date(),
