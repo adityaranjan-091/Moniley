@@ -1,6 +1,5 @@
 import Link from "next/link";
 import React from "react";
-import ThemeToggle from "../components/ThemeToggle";
 import { ArrowRight, Shield, Zap, Wallet, PieChart, TrendingUp } from "lucide-react";
 
 export default function Home() {
@@ -21,7 +20,6 @@ export default function Home() {
             <span className="text-xl font-bold tracking-tight text-foreground">Moniley</span>
           </div>
           <div className="flex items-center gap-6">
-            <ThemeToggle />
             <Link
               href="/login"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block"
