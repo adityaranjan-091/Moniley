@@ -11,7 +11,8 @@ import {
   LogOut,
   PieChart,
   BarChart,
-  Target
+  Target,
+  Bot
 } from "lucide-react";
 
 import {
@@ -34,6 +35,7 @@ const navItems = [
   { name: "Budgets", href: "/budgets", icon: PieChart },
   { name: "Reports", href: "/reports", icon: BarChart },
   { name: "Goals", href: "/goals", icon: Target },
+  { name: "AI Advisor", href: "/chat", icon: Bot },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 

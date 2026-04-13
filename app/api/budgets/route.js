@@ -32,7 +32,7 @@ export async function GET(req) {
         }).toArray();
 
         // 3. Aggregate Spending per Category
-        const spendingMap = {}; // { "Food": 500, "Travel": 1000 }
+        const spendingMap = {};
 
         transactions.forEach(t => {
             if (t.category) {
@@ -71,7 +71,6 @@ export async function POST(req) {
         const db = client.db();
 
         // Upsert Budget
-        // If a budget for this category exists for this user, update the amount.
         const result = await db.collection("budgets").updateOne(
             { userId, category },
             {

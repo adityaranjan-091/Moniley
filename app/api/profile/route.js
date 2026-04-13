@@ -18,12 +18,10 @@ export async function GET(req) {
             return NextResponse.json({ success: false, message: "User not found" }, { status: 404 });
         }
 
-        // Gather stats
         const transactionCount = await db.collection("transactions").countDocuments({ userId });
         const budgetCount = await db.collection("budgets").countDocuments({ userId });
 
-        // Calculate member since
-        const memberSince = user.createdAt || user._id.getTimestamp(); // Fallback to ObjectId timestamp
+        const memberSince = user.createdAt || user._id.getTimestamp();
 
         return NextResponse.json({
             success: true,
