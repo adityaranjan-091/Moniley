@@ -11,7 +11,7 @@ import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SidebarTrigger } from "@/components/ui/sidebar"; // Import Trigger
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,11 +22,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-
 export default function Navbar() {
   const router = useRouter();
   const { data: session } = useSession();
   const [query, setQuery] = useState("");
+  const userInitial =
+    session?.user?.name?.trim()?.charAt(0).toUpperCase() || "U";
 
   function onSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -36,8 +37,8 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-16 items-center px-4 sm:px-6 lg:px-8">
+    <header className="fixed left-1/2 top-2 z-50 w-[calc(100%-0.75rem)] max-w-7xl -translate-x-1/2 rounded-2xl border border-border/60 bg-background/60 shadow-[0_12px_32px_-16px_hsl(var(--foreground)/0.45)] ring-1 ring-white/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_42px_-20px_hsl(var(--foreground)/0.55)] supports-backdrop-filter:bg-background/45 sm:top-4 sm:w-[calc(100%-2rem)]">
+      <div className="flex h-12 items-center px-3 sm:h-14 sm:px-6 lg:px-8">
         {/* LEFT: Sidebar Trigger & Logo */}
         <div className="flex items-center gap-4">
           {/* This button toggles the sidebar */}
@@ -60,7 +61,7 @@ export default function Navbar() {
         </div>
 
         {/* CENTER: Search Bar */}
-        <div className="flex flex-1 items-center justify-center px-4">
+        <div className="flex flex-1 items-center justify-center px-2 sm:px-4">
           <form onSubmit={onSearch} className="relative w-full max-w-md">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -68,7 +69,7 @@ export default function Navbar() {
               placeholder="Search transactions..."
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="w-full bg-muted/50 pl-9 focus-visible:bg-background focus-visible:ring-primary"
+              className="w-full border-border/60 bg-background/40 pl-9 shadow-inner focus-visible:bg-background/70 focus-visible:ring-primary"
             />
           </form>
         </div>
@@ -79,9 +80,8 @@ export default function Navbar() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-9 w-9 rounded-full">
                 <Avatar className="h-9 w-9 border border-border">
-                  <AvatarImage src="/avatars/01.png" alt="User" />
-                  <AvatarFallback className="bg-primary/10 text-primary">
-                    <User className="h-4 w-4" />
+                  <AvatarFallback className="bg-primary/10 text-sm font-semibold text-primary">
+                    {userInitial}
                   </AvatarFallback>
                 </Avatar>
               </Button>
@@ -108,7 +108,9 @@ export default function Navbar() {
                   <CreditCard className="mr-2 h-4 w-4" />
                   <span>Settings</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push("/settings/notifications")}>
+                <DropdownMenuItem
+                  onClick={() => router.push("/settings/notifications")}
+                >
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Notifications</span>
                 </DropdownMenuItem>
@@ -116,11 +118,12 @@ export default function Navbar() {
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Export Data</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => router.push("/settings/security")}>
+                <DropdownMenuItem
+                  onClick={() => router.push("/settings/security")}
+                >
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Security</span>
                 </DropdownMenuItem>
-
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem
