@@ -35,14 +35,16 @@ export async function GET(req) {
         const spendingMap = {};
 
         transactions.forEach(t => {
-            if (t.category) {
-                spendingMap[t.category] = (spendingMap[t.category] || 0) + t.amount;
+            const key = t.categoryId ? t.categoryId.toString() : t.category;
+            if (key) {
+                spendingMap[key] = (spendingMap[key] || 0) + t.amount;
             }
         });
 
         // 4. Merge Budget + Spent
         const budgetsWithStats = budgets.map(b => {
-            const spent = spendingMap[b.category] || 0;
+            const key = b.categoryId ? b.categoryId.toString() : b.category;
+            const spent = spendingMap[key] || 0;
             const percentage = b.amount > 0 ? (spent / b.amount) * 100 : 0;
             return {
                 ...b,
@@ -70,13 +72,18 @@ export async function POST(req) {
         const client = await clientPromise;
         const db = client.db();
 
+        // Look up categoryId
+        const existingCategory = await db.collection("categories").findOne({ userId, name: category, type: "expense" });
+        const categoryId = existingCategory ? existingCategory._id : null;
+
         // Upsert Budget
         const result = await db.collection("budgets").updateOne(
-            { userId, category },
+            { userId, category }, // Keeping category in query for backwards compatibility on upsert
             {
                 $set: {
                     userId,
                     category,
+                    ...(categoryId ? { categoryId } : {}),
                     amount: Number(amount),
                     updatedAt: new Date()
                 },

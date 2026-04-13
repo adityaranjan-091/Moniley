@@ -1,5 +1,6 @@
 import clientPromise from "@/lib/mongodb";
 import { NextResponse } from "next/server";
+import { ObjectId } from "mongodb";
 
 export async function POST(req) {
     try {
@@ -35,26 +36,33 @@ export async function POST(req) {
             type
         });
 
+        let categoryId;
         if (!existingCategory) {
-            await db.collection("categories").insertOne({
+            const newCat = await db.collection("categories").insertOne({
                 userId,
                 name: categoryName,
                 type,
                 color: type === "income" ? "#10b981" : "#8b5cf6", // Default colours
                 icon: type === "income" ? "📈" : "📉",
                 createdAt: new Date(),
+                updatedAt: new Date(),
             });
+            categoryId = newCat.insertedId;
+        } else {
+            categoryId = existingCategory._id;
         }
 
         const transaction = {
             userId,
             type, // 'income' or 'expense'
             amount: Number(amount),
-            category: categoryName,
+            categoryId, // Reference to category collection
+            category: categoryName, // Fallback string attribute
             description: description || "", // Unified field for Source/Description
             notes: notes || "",
             date: date ? new Date(date) : new Date(),
             createdAt: new Date(),
+            updatedAt: new Date(),
         };
 
         const result = await db.collection("transactions").insertOne(transaction);
@@ -112,9 +120,6 @@ export async function DELETE(req) {
 
         const client = await clientPromise;
         const db = client.db();
-
-        // Import ObjectId locally to avoid import errors if not standard
-        const { ObjectId } = require('mongodb');
 
         const result = await db.collection("transactions").deleteOne({ _id: new ObjectId(id) });
 

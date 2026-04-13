@@ -227,6 +227,7 @@ export async function POST(req) {
                                         { role: "user", content: message, timestamp: now },
                                         { role: "assistant", content: fullResponse, timestamp: now },
                                     ],
+                                    $slice: -100, // Keep only the last 100 messages
                                 },
                             },
                             $set: { updatedAt: now },

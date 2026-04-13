@@ -20,6 +20,7 @@ export async function DELETE(req) {
                 db.collection("transactions").deleteMany({ userId }),
                 db.collection("budgets").deleteMany({ userId }),
                 db.collection("goals").deleteMany({ userId }),
+                db.collection("chat_conversations").deleteMany({ userId }),
                 db.collection("categories").deleteMany({ userId, isDefault: { $ne: true } }) // Keep defaults if any
             ]);
             return NextResponse.json({ success: true, message: "Data reset successfully" });
@@ -30,6 +31,7 @@ export async function DELETE(req) {
                 db.collection("transactions").deleteMany({ userId }),
                 db.collection("budgets").deleteMany({ userId }),
                 db.collection("goals").deleteMany({ userId }),
+                db.collection("chat_conversations").deleteMany({ userId }),
                 db.collection("categories").deleteMany({ userId })
             ]);
             return NextResponse.json({ success: true, message: "Account deleted successfully" });
