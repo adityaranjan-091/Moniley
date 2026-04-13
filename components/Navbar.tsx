@@ -1,11 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, User, LogOut, Settings, CreditCard } from "lucide-react";
 import Image from "next/image";
+import { useAuth } from "@/hooks/use-auth";
 
 // Shadcn UI Imports
 import { Input } from "@/components/ui/input";
@@ -24,10 +24,10 @@ import {
 
 export default function Navbar() {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { user, signOut } = useAuth();
   const [query, setQuery] = useState("");
-  const userInitial =
-    session?.user?.name?.trim()?.charAt(0).toUpperCase() || "U";
+  const userName = user?.displayName || user?.email || "User";
+  const userInitial = userName.trim().charAt(0).toUpperCase() || "U";
 
   function onSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -91,10 +91,10 @@ export default function Navbar() {
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">
-                    {session?.user?.name || "User"}
+                    {user?.displayName || "User"}
                   </p>
                   <p className="text-xs leading-none text-muted-foreground">
-                    {session?.user?.email || ""}
+                    {user?.email || ""}
                   </p>
                 </div>
               </DropdownMenuLabel>
@@ -128,7 +128,7 @@ export default function Navbar() {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="text-destructive focus:text-destructive"
-                onClick={() => signOut({ callbackUrl: "/login" })}
+                onClick={() => signOut()}
               >
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>Log out</span>

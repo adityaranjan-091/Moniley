@@ -1,10 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useAuth } from "@/hooks/use-auth";
 
 type IncomeItem = {
   _id: string;
@@ -18,15 +24,17 @@ type IncomeItem = {
 };
 
 export default function IncomePage() {
-  const { data: session } = useSession();
+  const { user, loading: authLoading } = useAuth();
   const [amount, setAmount] = useState("");
   const [source, setSource] = useState(""); // Will map to 'description'
   const [smartInput, setSmartInput] = useState("");
   const [date, setDate] = useState<string>(
-    new Date().toISOString().slice(0, 10)
+    new Date().toISOString().slice(0, 10),
   );
   const [category, setCategory] = useState("");
-  const [categoriesList, setCategoriesList] = useState<{_id: string, name: string}[]>([]);
+  const [categoriesList, setCategoriesList] = useState<
+    { _id: string; name: string }[]
+  >([]);
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
   const [isCategorizing, setIsCategorizing] = useState(false);
@@ -34,18 +42,22 @@ export default function IncomePage() {
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (session?.user?.email) {
+    if (authLoading) return;
+
+    if (user?.email) {
       fetchIncomes();
       fetchCategories();
+    } else {
+      setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
+  }, [authLoading, user]);
 
   async function fetchIncomes() {
     try {
       setLoading(true);
       const res = await fetch(
-        `/api/transactions?userId=${encodeURIComponent(session?.user?.email || "")}&type=income`
+        `/api/transactions?userId=${encodeURIComponent(user?.email || "")}&type=income`,
       );
       const json = await res.json();
       if (json.success) setIncomes(json.transactions || []);
@@ -61,8 +73,8 @@ export default function IncomePage() {
     try {
       const res = await fetch(
         `/api/categories?userId=${encodeURIComponent(
-          session?.user?.email || ""
-        )}&type=income`
+          user?.email || "",
+        )}&type=income`,
       );
       const json = await res.json();
       if (json.success) setCategoriesList(json.categories || []);
@@ -84,7 +96,7 @@ export default function IncomePage() {
         body: JSON.stringify({
           text: smartInput,
           type: "income",
-          userId: session?.user?.email,
+          userId: user?.email,
         }),
       });
       const json = await res.json();
@@ -92,7 +104,8 @@ export default function IncomePage() {
         if (json.data.amount) setAmount(String(json.data.amount));
         if (json.data.category) setCategory(json.data.category);
         if (json.data.date) setDate(json.data.date);
-        if (json.data.description && json.data.description !== "Uncategorized") setSource(json.data.description);
+        if (json.data.description && json.data.description !== "Uncategorized")
+          setSource(json.data.description);
       } else {
         alert(json.message || "Failed to auto-categorize");
       }
@@ -115,13 +128,13 @@ export default function IncomePage() {
     try {
       setLoading(true);
       const body = {
-        userId: session?.user?.email,
+        userId: user?.email,
         amount: Number(amount),
         description: source, // Mapping 'source' to 'description'
         category,
         date,
         notes,
-        type: "income"
+        type: "income",
       };
 
       const res = await fetch("/api/transactions", {
@@ -151,9 +164,11 @@ export default function IncomePage() {
   async function handleDelete(id: string) {
     if (!confirm("Delete this income?")) return;
     try {
-      const res = await fetch(`/api/transactions?id=${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/transactions?id=${id}`, {
+        method: "DELETE",
+      });
       if (res.ok) {
-        setIncomes(prev => prev.filter(i => i._id !== id));
+        setIncomes((prev) => prev.filter((i) => i._id !== id));
       }
     } catch (e) {
       console.error(e);
@@ -164,13 +179,15 @@ export default function IncomePage() {
 
   return (
     <div className="max-w-3xl mx-auto py-8">
-      <h1 className="text-2xl font-semibold mb-4 text-foreground">Add Income</h1>
+      <h1 className="text-2xl font-semibold mb-4 text-foreground">
+        Add Income
+      </h1>
 
       <div className="mb-6 bg-card border rounded-xl p-6 shadow-sm">
         <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6">
           {/* AI Smart Entry Block */}
-          <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 p-4 rounded-xl border border-green-200 dark:border-green-800/50">
-            <label className="block text-sm font-medium text-green-800 dark:text-green-300 mb-3 flex items-center gap-2">
+          <div className="bg-linear-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 p-4 rounded-xl border border-green-200 dark:border-green-800/50">
+            <label className="flex items-center gap-2 text-sm font-medium text-green-800 dark:text-green-300 mb-3">
               ✨ AI Smart Entry
             </label>
             <div className="flex flex-col sm:flex-row gap-3">
@@ -180,16 +197,19 @@ export default function IncomePage() {
                 onChange={(e) => setSmartInput(e.target.value)}
                 className="bg-white/80 dark:bg-background/80 border-green-200 dark:border-green-800/50 focus-visible:ring-green-500 shadow-inner"
               />
-              <Button 
-                type="button" 
-                className="bg-green-600 hover:bg-green-700 text-white whitespace-nowrap min-w-[130px] shadow-sm transition-all shadow-green-600/20" 
-                onClick={handleSmartCategorize} 
+              <Button
+                type="button"
+                className="bg-green-600 hover:bg-green-700 text-white whitespace-nowrap min-w-32.5 shadow-sm transition-all shadow-green-600/20"
+                onClick={handleSmartCategorize}
                 disabled={isCategorizing || !smartInput}
               >
                 {isCategorizing ? "Thinking..." : "Auto-fill Form"}
               </Button>
             </div>
-            <p className="text-xs text-green-600/80 dark:text-green-400/70 mt-2.5 font-medium tracking-tight">Just type what happened, and we'll automatically fill out the form below.</p>
+            <p className="text-xs text-green-600/80 dark:text-green-400/70 mt-2.5 font-medium tracking-tight">
+              Just type what happened, and we'll automatically fill out the form
+              below.
+            </p>
           </div>
 
           <div className="relative">
@@ -197,7 +217,9 @@ export default function IncomePage() {
               <span className="w-full border-t border-muted/50" />
             </div>
             <div className="relative flex justify-center text-[10px] font-semibold uppercase tracking-wider">
-              <span className="bg-card px-3 text-muted-foreground">Or Enter Manually</span>
+              <span className="bg-card px-3 text-muted-foreground">
+                Or Enter Manually
+              </span>
             </div>
           </div>
 
@@ -266,17 +288,19 @@ export default function IncomePage() {
               {loading ? "Saving..." : "Add Income"}
             </Button>
             {message && (
-              <span className="text-sm text-green-600 font-medium animate-pulse">{message}</span>
+              <span className="text-sm text-green-600 font-medium animate-pulse">
+                {message}
+              </span>
             )}
           </div>
         </form>
       </div>
 
       <div className="mb-4 flex items-center justify-between bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-100 dark:border-green-800">
-        <div className="text-sm">
-          {incomes.length} record(s)
+        <div className="text-sm">{incomes.length} record(s)</div>
+        <div className="text-lg font-bold text-green-700 dark:text-green-400">
+          Total: ₹{total.toFixed(2)}
         </div>
-        <div className="text-lg font-bold text-green-700 dark:text-green-400">Total: ₹{total.toFixed(2)}</div>
       </div>
 
       <section>
@@ -284,7 +308,9 @@ export default function IncomePage() {
         {loading && incomes.length === 0 ? (
           <div className="text-sm">Loading...</div>
         ) : incomes.length === 0 ? (
-          <div className="text-sm text-muted-foreground p-4 bg-muted/20 rounded text-center">No incomes yet.</div>
+          <div className="text-sm text-muted-foreground p-4 bg-muted/20 rounded text-center">
+            No incomes yet.
+          </div>
         ) : (
           <ul className="space-y-2">
             {incomes.map((inc) => (
@@ -293,8 +319,13 @@ export default function IncomePage() {
                 className="group bg-card border rounded-lg p-4 flex justify-between items-center hover:shadow-md transition-all"
               >
                 <div>
-                  <div className="font-medium text-foreground">{inc.description}</div>
-                  <div className="text-sm text-muted-foreground">{new Date(inc.date).toLocaleDateString()} {inc.notes && `• ${inc.notes}`}</div>
+                  <div className="font-medium text-foreground">
+                    {inc.description}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {new Date(inc.date).toLocaleDateString()}{" "}
+                    {inc.notes && `• ${inc.notes}`}
+                  </div>
                 </div>
                 <div className="text-right flex items-center gap-4">
                   <div className="font-semibold text-green-600 dark:text-green-400">

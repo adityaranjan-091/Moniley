@@ -1,6 +1,5 @@
 "use client";
 
-import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -12,7 +11,7 @@ import {
   PieChart,
   BarChart,
   Target,
-  Bot
+  Bot,
 } from "lucide-react";
 
 import {
@@ -26,6 +25,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { useAuth } from "@/hooks/use-auth";
 
 const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
@@ -41,6 +41,7 @@ const navItems = [
 
 export default function AppSidebar() {
   const pathname = usePathname();
+  const { signOut } = useAuth();
 
   return (
     <Sidebar
@@ -54,9 +55,10 @@ export default function AppSidebar() {
           <SidebarMenu>
             {navItems.map((item) => {
               // Active state logic
-              const isActive = item.href === "/dashboard"
-                ? pathname === item.href
-                : pathname.startsWith(item.href);
+              const isActive =
+                item.href === "/dashboard"
+                  ? pathname === item.href
+                  : pathname.startsWith(item.href);
 
               return (
                 <SidebarMenuItem key={item.name}>
@@ -83,7 +85,7 @@ export default function AppSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton
               tooltip="Log Out"
-              onClick={() => signOut({ callbackUrl: "/login" })}
+              onClick={() => signOut()}
               className="text-destructive hover:bg-destructive/10 hover:text-destructive"
             >
               <LogOut />

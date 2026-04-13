@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, FormEvent, ChangeEvent, JSX } from "react";
+import { useEffect, useState, FormEvent, ChangeEvent, JSX } from "react";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 // ── TYPES ───────────────────────────────────────────────────────────
 interface SignupFormData {
@@ -32,6 +34,7 @@ const validateForm = (data: SignupFormData): string | null => {
 // ── COMPONENT ──────────────────────────────────────────────────────
 export default function SignupPage(): JSX.Element {
   const router = useRouter();
+  const { user, loading, signUpWithEmail, signInWithGoogle } = useAuth();
 
   const [formData, setFormData] = useState<SignupFormData>({
     name: "",
@@ -42,6 +45,12 @@ export default function SignupPage(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace("/dashboard");
+    }
+  }, [loading, router, user]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -62,25 +71,43 @@ export default function SignupPage(): JSX.Element {
     setError(null);
 
     try {
-      const res = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data: ApiResponse = await res.json();
-
-      if (res.ok && data.success) {
-        router.push("/login?registered=true");
-      } else {
-        setError(data.message || "Registration failed. Please try again.");
-      }
-    } catch {
-      setError("An error occurred. Please try again later.");
+      await signUpWithEmail(formData);
+      router.push("/dashboard");
+    } catch (signupError) {
+      setError(
+        signupError instanceof Error
+          ? signupError.message
+          : "Registration failed. Please try again.",
+      );
     } finally {
       setIsLoading(false);
     }
   };
+
+  const handleGoogleSignup = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      await signInWithGoogle();
+      router.push("/dashboard");
+    } catch (signupError) {
+      setError(
+        signupError instanceof Error
+          ? signupError.message
+          : "Google sign-in failed",
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   const inputBaseClasses =
     "w-full px-4 py-3 border rounded-lg bg-background text-foreground " +
@@ -192,6 +219,15 @@ export default function SignupPage(): JSX.Element {
           className="w-full bg-primary text-primary-foreground py-3 px-4 rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isLoading ? "Creating Account..." : "Create Account"}
+        </button>
+
+        <button
+          type="button"
+          onClick={handleGoogleSignup}
+          disabled={isLoading}
+          className="w-full rounded-lg border py-3 px-4 font-medium hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Continue with Google
         </button>
 
         <p className="text-center text-sm text-muted-foreground">

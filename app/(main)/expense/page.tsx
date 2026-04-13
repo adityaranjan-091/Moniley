@@ -3,8 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@/hooks/use-auth";
 
 type Expense = {
   _id: string;
@@ -17,33 +16,39 @@ type Expense = {
 };
 
 export default function ExpensePage() {
-  const { data: session } = useSession();
+  const { user, loading: authLoading } = useAuth();
   const [description, setDescription] = useState("");
   const [smartInput, setSmartInput] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [category, setCategory] = useState("");
-  const [categoriesList, setCategoriesList] = useState<{_id: string, name: string}[]>([]);
+  const [categoriesList, setCategoriesList] = useState<
+    { _id: string; name: string }[]
+  >([]);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(false);
   const [isCategorizing, setIsCategorizing] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (session?.user?.email) {
+    if (authLoading) return;
+
+    if (user?.email) {
       fetchExpenses();
       fetchCategories();
+    } else {
+      setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session]);
+  }, [authLoading, user]);
 
   async function fetchExpenses() {
     try {
       setLoading(true);
       const res = await fetch(
         `/api/transactions?userId=${encodeURIComponent(
-          session?.user?.email || ""
-        )}&type=expense`
+          user?.email || "",
+        )}&type=expense`,
       );
       const json = await res.json();
       if (json.success) setExpenses(json.transactions || []);
@@ -59,8 +64,8 @@ export default function ExpensePage() {
     try {
       const res = await fetch(
         `/api/categories?userId=${encodeURIComponent(
-          session?.user?.email || ""
-        )}&type=expense`
+          user?.email || "",
+        )}&type=expense`,
       );
       const json = await res.json();
       if (json.success) setCategoriesList(json.categories || []);
@@ -82,7 +87,7 @@ export default function ExpensePage() {
         body: JSON.stringify({
           text: smartInput,
           type: "expense",
-          userId: session?.user?.email,
+          userId: user?.email,
         }),
       });
       const json = await res.json();
@@ -90,7 +95,10 @@ export default function ExpensePage() {
         if (json.data.amount) setAmount(String(json.data.amount));
         if (json.data.category) setCategory(json.data.category);
         if (json.data.date) setDate(json.data.date);
-        if (json.data.description && json.data.description !== "Uncategorized") {
+        if (
+          json.data.description &&
+          json.data.description !== "Uncategorized"
+        ) {
           setDescription(json.data.description);
         }
       } else {
@@ -116,7 +124,7 @@ export default function ExpensePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          userId: session?.user?.email,
+          userId: user?.email,
           type: "expense",
           amount: Number(amount),
           category,
@@ -147,7 +155,7 @@ export default function ExpensePage() {
     if (!confirm("Delete this expense?")) return;
     try {
       const res = await fetch(`/api/transactions?id=${id}`, {
-        method: "DELETE"
+        method: "DELETE",
       });
       const json = await res.json();
       if (json.success) {
@@ -170,9 +178,8 @@ export default function ExpensePage() {
         className="grid grid-cols-1 gap-6 mb-8 bg-card p-6 rounded-xl border shadow-sm"
         onSubmit={handleAdd}
       >
-        {/* AI Smart Entry Block */}
-        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 p-4 rounded-xl border border-indigo-200 dark:border-indigo-800/50">
-          <label className="block text-sm font-medium text-indigo-800 dark:text-indigo-300 mb-3 flex items-center gap-2">
+        <div className="bg-linear-to-br from-indigo-50 to-purple-50 dark:from-indigo-950/30 dark:to-purple-950/30 p-4 rounded-xl border border-indigo-200 dark:border-indigo-800/50">
+          <label className="flex items-center gap-2 text-sm font-medium text-indigo-800 dark:text-indigo-300 mb-3">
             ✨ AI Smart Entry
           </label>
           <div className="flex flex-col sm:flex-row gap-3">
@@ -182,16 +189,19 @@ export default function ExpensePage() {
               onChange={(e) => setSmartInput(e.target.value)}
               className="bg-white/80 dark:bg-background/80 border-indigo-200 dark:border-indigo-800/50 focus-visible:ring-indigo-500 shadow-inner"
             />
-            <Button 
-              type="button" 
-              className="bg-indigo-600 hover:bg-indigo-700 text-white whitespace-nowrap min-w-[130px] shadow-sm transition-all shadow-indigo-600/20" 
-              onClick={handleSmartCategorize} 
+            <Button
+              type="button"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white whitespace-nowrap min-w-32.5 shadow-sm transition-all shadow-indigo-600/20"
+              onClick={handleSmartCategorize}
               disabled={isCategorizing || !smartInput}
             >
               {isCategorizing ? "Thinking..." : "Auto-fill Form"}
             </Button>
           </div>
-          <p className="text-xs text-indigo-600/80 dark:text-indigo-400/70 mt-2.5 font-medium tracking-tight">Just type what happened, and we'll automatically fill out the form below.</p>
+          <p className="text-xs text-indigo-600/80 dark:text-indigo-400/70 mt-2.5 font-medium tracking-tight">
+            Just type what happened, and we&apos;ll automatically fill out the
+            form below.
+          </p>
         </div>
 
         <div className="relative">
@@ -199,13 +209,17 @@ export default function ExpensePage() {
             <span className="w-full border-t border-muted/50" />
           </div>
           <div className="relative flex justify-center text-[10px] font-semibold uppercase tracking-wider">
-            <span className="bg-card px-3 text-muted-foreground">Or Enter Manually</span>
+            <span className="bg-card px-3 text-muted-foreground">
+              Or Enter Manually
+            </span>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Description</label>
+            <label className="block text-sm font-medium mb-1">
+              Description
+            </label>
             <Input
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -258,10 +272,10 @@ export default function ExpensePage() {
       </form>
 
       <div className="mb-4 flex items-center justify-between bg-secondary/50 p-4 rounded-lg">
-        <div className="text-sm">
-          {expenses.length} transaction(s)
+        <div className="text-sm">{expenses.length} transaction(s)</div>
+        <div className="text-lg font-bold text-primary">
+          Total: ₹{total.toFixed(2)}
         </div>
-        <div className="text-lg font-bold text-primary">Total: ₹{total.toFixed(2)}</div>
       </div>
 
       <div className="space-y-3">
@@ -278,14 +292,20 @@ export default function ExpensePage() {
               className="group flex items-center justify-between p-4 bg-card rounded-lg border hover:shadow-md transition-all"
             >
               <div className="flex flex-col gap-1">
-                <span className="font-semibold text-foreground">{exp.description}</span>
+                <span className="font-semibold text-foreground">
+                  {exp.description}
+                </span>
                 <div className="text-xs text-muted-foreground flex gap-2">
-                  <span className="bg-secondary px-2 py-0.5 rounded text-secondary-foreground">{exp.category}</span>
+                  <span className="bg-secondary px-2 py-0.5 rounded text-secondary-foreground">
+                    {exp.category}
+                  </span>
                   <span>• {new Date(exp.date).toLocaleDateString()}</span>
                 </div>
               </div>
               <div className="flex items-center gap-4">
-                <span className="font-bold text-red-500">- ₹{exp.amount.toFixed(2)}</span>
+                <span className="font-bold text-red-500">
+                  - ₹{exp.amount.toFixed(2)}
+                </span>
                 <Button
                   variant="ghost"
                   size="sm"

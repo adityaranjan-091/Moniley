@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
-import AppSidebar from "@/components/AppSidebar"; // Ensure this path is correct
-import Providers from "@/Context/Providers"; // Check your Providers path
+import AppSidebar from "@/components/AppSidebar";
+import AuthGate from "@/components/auth/AuthGate";
 import { SidebarProvider } from "@/components/ui/sidebar";
 
 export default function DashboardLayout({
@@ -9,7 +9,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Providers>
+    <AuthGate>
       <SidebarProvider defaultOpen={true}>
         {/* 1. Outer Container: Flex Column (Navbar on Top) */}
         <div className="flex min-h-screen w-full flex-col bg-muted/20">
@@ -28,6 +28,6 @@ export default function DashboardLayout({
           </div>
         </div>
       </SidebarProvider>
-    </Providers>
+    </AuthGate>
   );
 }

@@ -1,11 +1,11 @@
 "use client";
 
 import { ThemeProvider } from "next-themes";
-import { SessionProvider } from "next-auth/react";
+import FirebaseAuthProvider from "./FirebaseAuthProvider";
 
 export default function Providers({ children }) {
   return (
-    <SessionProvider>
+    <FirebaseAuthProvider>
       <ThemeProvider
         attribute="class"
         defaultTheme="system"
@@ -14,6 +14,6 @@ export default function Providers({ children }) {
       >
         {children}
       </ThemeProvider>
-    </SessionProvider>
+    </FirebaseAuthProvider>
   );
 }
