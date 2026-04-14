@@ -1,6 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import React from "react";
-import { ArrowRight, Shield, Zap, Wallet, PieChart, TrendingUp } from "lucide-react";
+import { ArrowRight, Shield, Zap, PieChart } from "lucide-react";
 
 export default function Home() {
   return (
@@ -13,19 +14,9 @@ export default function Home() {
       <div className="relative z-10 flex flex-col min-h-screen">
         {/* Navigation / Header */}
         <header className="flex items-center justify-between px-6 py-6 max-w-7xl mx-auto w-full">
-          <div className="flex items-center gap-2">
-            <div className="size-8 rounded-lg bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <Wallet className="size-5 text-primary-foreground" />
-            </div>
+          <div className="flex items-center gap-3">
+            <Image src="/logo.png" alt="Moniley" width={48} height={48} className="w-12 h-12 object-contain" />
             <span className="text-xl font-bold tracking-tight text-foreground">Moniley</span>
-          </div>
-          <div className="flex items-center gap-6">
-            <Link
-              href="/login"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block"
-            >
-              Sign In
-            </Link>
           </div>
         </header>
 
