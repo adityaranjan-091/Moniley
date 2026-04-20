@@ -110,52 +110,52 @@ export default function NotificationsSettingsPage() {
       <div className="space-y-4">
         <h4 className="text-sm font-medium">Alert Preferences</h4>
         <div className="grid gap-4">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="budget" className="flex flex-col space-y-1">
-              <span>Budget Alerts</span>
-              <span className="font-normal text-xs text-muted-foreground">
+          <div className="flex items-center justify-between rounded-lg border p-4">
+            <div className="space-y-0.5">
+              <Label className="text-base" htmlFor="budget">Budget Alerts</Label>
+              <p className="text-sm text-muted-foreground">
                 Notify when exceeding 80% of budget.
-              </span>
-            </Label>
+              </p>
+            </div>
             <Switch
               id="budget"
               checked={settings.budgetAlerts}
               onCheckedChange={() => handleToggle("budgetAlerts")}
             />
           </div>
-          <div className="flex items-center justify-between">
-            <Label htmlFor="large" className="flex flex-col space-y-1">
-              <span>Large Transaction Alerts</span>
-              <span className="font-normal text-xs text-muted-foreground">
+          <div className="flex items-center justify-between rounded-lg border p-4">
+            <div className="space-y-0.5">
+              <Label className="text-base" htmlFor="large">Large Transaction Alerts</Label>
+              <p className="text-sm text-muted-foreground">
                 Notify for transactions over ₹10,000.
-              </span>
-            </Label>
+              </p>
+            </div>
             <Switch
               id="large"
               checked={settings.largeTransactionAlerts}
               onCheckedChange={() => handleToggle("largeTransactionAlerts")}
             />
           </div>
-          <div className="flex items-center justify-between">
-            <Label htmlFor="low" className="flex flex-col space-y-1">
-              <span>Low Balance Alerts</span>
-              <span className="font-normal text-xs text-muted-foreground">
+          <div className="flex items-center justify-between rounded-lg border p-4">
+            <div className="space-y-0.5">
+              <Label className="text-base" htmlFor="low">Low Balance Alerts</Label>
+              <p className="text-sm text-muted-foreground">
                 Notify when balance drops below ₹1,000.
-              </span>
-            </Label>
+              </p>
+            </div>
             <Switch
               id="low"
               checked={settings.lowBalanceAlerts}
               onCheckedChange={() => handleToggle("lowBalanceAlerts")}
             />
           </div>
-          <div className="flex items-center justify-between">
-            <Label htmlFor="goals" className="flex flex-col space-y-1">
-              <span>Goal Milestones</span>
-              <span className="font-normal text-xs text-muted-foreground">
+          <div className="flex items-center justify-between rounded-lg border p-4">
+            <div className="space-y-0.5">
+              <Label className="text-base" htmlFor="goals">Goal Milestones</Label>
+              <p className="text-sm text-muted-foreground">
                 Celebrate when you reach a savings goal.
-              </span>
-            </Label>
+              </p>
+            </div>
             <Switch
               id="goals"
               checked={settings.goalMilestones}

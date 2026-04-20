@@ -76,19 +76,20 @@ function renderMarkdown(text: string) {
   // Split into lines, process each
   const lines = text.split("\n");
   const elements: React.ReactNode[] = [];
-  let inList = false;
   let listItems: React.ReactNode[] = [];
   let listKey = 0;
 
   const flushList = () => {
     if (listItems.length > 0) {
       elements.push(
-        <ul key={`list-${listKey++}`} className="my-2 ml-4 space-y-1.5 list-none">
+        <ul
+          key={`list-${listKey++}`}
+          className="my-2 ml-4 space-y-1.5 list-none"
+        >
           {listItems}
         </ul>,
       );
       listItems = [];
-      inList = false;
     }
   };
 
@@ -141,7 +142,10 @@ function renderMarkdown(text: string) {
     if (trimmed.startsWith("### ")) {
       flushList();
       elements.push(
-        <h4 key={idx} className="mt-4 mb-1.5 text-sm font-bold text-foreground flex items-center gap-2">
+        <h4
+          key={idx}
+          className="mt-4 mb-1.5 text-sm font-bold text-foreground flex items-center gap-2"
+        >
           <span className="w-1 h-4 rounded-full bg-primary/60 shrink-0" />
           {processInline(trimmed.slice(4))}
         </h4>,
@@ -151,7 +155,10 @@ function renderMarkdown(text: string) {
     if (trimmed.startsWith("## ")) {
       flushList();
       elements.push(
-        <h3 key={idx} className="mt-4 mb-1.5 text-base font-bold text-foreground flex items-center gap-2">
+        <h3
+          key={idx}
+          className="mt-4 mb-1.5 text-base font-bold text-foreground flex items-center gap-2"
+        >
           <span className="w-1.5 h-5 rounded-full bg-primary/60 shrink-0" />
           {processInline(trimmed.slice(3))}
         </h3>,
@@ -165,10 +172,12 @@ function renderMarkdown(text: string) {
       trimmed.startsWith("* ") ||
       /^\d+\.\s/.test(trimmed)
     ) {
-      inList = true;
       const content = trimmed.replace(/^[-*]\s|^\d+\.\s/, "");
       listItems.push(
-        <li key={idx} className="text-sm leading-relaxed flex items-start gap-2">
+        <li
+          key={idx}
+          className="text-sm leading-relaxed flex items-start gap-2"
+        >
           <span className="w-1.5 h-1.5 rounded-full bg-primary/50 mt-2 shrink-0" />
           <span>{processInline(content)}</span>
         </li>,
@@ -196,20 +205,76 @@ function TypingIndicator() {
     <div className="flex items-center gap-3 py-1">
       <div className="flex gap-1.5 items-center">
         <span className="relative flex h-2 w-2">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/40" style={{ animationDuration: "1.4s" }} />
+          <span
+            className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/40"
+            style={{ animationDuration: "1.4s" }}
+          />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-primary/70" />
         </span>
         <span className="relative flex h-2 w-2">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/40" style={{ animationDuration: "1.4s", animationDelay: "200ms" }} />
+          <span
+            className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/40"
+            style={{ animationDuration: "1.4s", animationDelay: "200ms" }}
+          />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-primary/70" />
         </span>
         <span className="relative flex h-2 w-2">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/40" style={{ animationDuration: "1.4s", animationDelay: "400ms" }} />
+          <span
+            className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/40"
+            style={{ animationDuration: "1.4s", animationDelay: "400ms" }}
+          />
           <span className="relative inline-flex h-2 w-2 rounded-full bg-primary/70" />
         </span>
       </div>
       <span className="text-xs text-muted-foreground animate-pulse">
         Analyzing your finances…
+      </span>
+    </div>
+  );
+}
+
+function AssistantAvatar({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
+  const sizeClasses = {
+    sm: "h-8 w-8 rounded-xl",
+    md: "h-10 w-10 rounded-2xl",
+    lg: "h-24 w-24 rounded-3xl",
+  };
+
+  const iconClasses = {
+    sm: "h-4 w-4",
+    md: "h-5 w-5",
+    lg: "h-12 w-12",
+  };
+
+  const sparkleClasses = {
+    sm: "h-1.5 w-1.5",
+    md: "h-2 w-2",
+    lg: "h-3.5 w-3.5",
+  };
+
+  const badgeClasses = {
+    sm: "h-3.5 w-3.5 text-[6px]",
+    md: "h-4 w-4 text-[7px]",
+    lg: "h-6 w-6 text-[9px]",
+  };
+
+  return (
+    <div
+      className={`relative overflow-hidden border border-primary/20 bg-linear-to-br from-primary/25 via-primary/10 to-background/90 shadow-[0_14px_32px_-20px_color-mix(in_oklch,var(--primary),black_35%)] ${sizeClasses[size]}`}
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.65)_0%,transparent_40%)] opacity-80" />
+      <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_18%,rgba(255,255,255,0.14)_18%,transparent_42%)] opacity-60" />
+      <div className="absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/10" />
+      <Bot
+        className={`relative z-10 mx-auto text-primary ${iconClasses[size]}`}
+      />
+      <Sparkles
+        className={`absolute text-primary/80 ${size === "lg" ? "right-3 top-3" : "right-1.5 top-1.5"} ${sparkleClasses[size]}`}
+      />
+      <span
+        className={`absolute flex items-center justify-center rounded-full border border-background/80 bg-background/90 font-semibold text-primary shadow-sm ${size === "lg" ? "bottom-3 right-3" : "bottom-0.5 right-0.5"} ${badgeClasses[size]}`}
+      >
+        AI
       </span>
     </div>
   );
@@ -454,99 +519,113 @@ export default function ChatPage() {
 
   // ── Render ──
   return (
-    <div className="flex h-[calc(100svh-3.5rem)] gap-0 -m-6 md:-m-8 overflow-hidden">
-      {/* ═══ SIDEBAR — Conversation History ═══ */}
+    <div className="h-[calc(100svh-3.5rem)] -m-6 md:-m-8">
       <div
-        className={`
-          flex flex-col border-r border-border/60 shrink-0
-          transition-all duration-300 ease-in-out overflow-hidden
-          ${sidebarOpen ? "w-80" : "w-0"}
-        `}
+        className="flex flex-col md:flex-row h-full overflow-hidden  border border-border/60 bg-background/80 shadow-[0_24px_70px_-35px_rgba(15,23,42,0.35)] backdrop-blur-xl"
         style={{
-          background: "linear-gradient(180deg, var(--card) 0%, color-mix(in oklch, var(--card), var(--background) 30%) 100%)",
+          background:
+            "linear-gradient(180deg, color-mix(in oklch, var(--card), white 6%) 0%, color-mix(in oklch, var(--card), var(--background) 16%) 100%)",
         }}
       >
-        {/* Sidebar Header */}
-        <div className="px-4 pt-5 pb-3 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div
-                className="flex items-center justify-center w-8 h-8 rounded-xl"
-                style={{
-                  background: "linear-gradient(135deg, color-mix(in oklch, var(--primary), transparent 70%) 0%, color-mix(in oklch, var(--primary), transparent 90%) 100%)",
-                }}
-              >
-                <Sparkles className="w-4 h-4 text-primary" />
+        {/* ═══ SIDEBAR — Conversation History ═══ */}
+        <div
+          className={`
+          flex flex-col border-r border-border/60 shrink-0 min-h-0
+          transition-all duration-300 ease-in-out overflow-hidden
+          ${sidebarOpen ? "w-64 md:w-[20rem]" : "w-0"}
+        `}
+          style={{
+            background:
+              "linear-gradient(180deg, color-mix(in oklch, var(--card), white 4%) 0%, color-mix(in oklch, var(--card), var(--background) 30%) 100%)",
+          }}
+        >
+          {/* Sidebar Header */}
+          <div className="px-4 pt-5 pb-3 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="flex items-center justify-center w-8 h-8 rounded-xl"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, color-mix(in oklch, var(--primary), transparent 70%) 0%, color-mix(in oklch, var(--primary), transparent 90%) 100%)",
+                  }}
+                >
+                  <Sparkles className="w-4 h-4 text-primary" />
+                </div>
+                <span className="text-sm font-bold text-foreground tracking-tight">
+                  Conversations
+                </span>
               </div>
-              <span className="text-sm font-bold text-foreground tracking-tight">
-                Conversations
-              </span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-xl hover:bg-primary/10 transition-colors"
+                onClick={startNewChat}
+                title="New Chat"
+              >
+                <Plus className="w-4 h-4" />
+              </Button>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8 rounded-xl hover:bg-primary/10 transition-colors"
-              onClick={startNewChat}
-              title="New Chat"
-            >
-              <Plus className="w-4 h-4" />
-            </Button>
-          </div>
 
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/60" />
-            <input
-              type="text"
-              placeholder="Search conversations…"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/60" />
+              <input
+                type="text"
+                placeholder="Search conversations…"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="
                 w-full pl-9 pr-3 py-2 text-xs rounded-xl
                 bg-background/60 border border-border/50
                 placeholder:text-muted-foreground/50
                 focus:outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary/40
                 transition-all
               "
-            />
+              />
+            </div>
           </div>
-        </div>
 
-        {/* Conversation list */}
-        <div className="flex-1 overflow-y-auto px-2 pb-2 space-y-0.5 scrollbar-thin">
-          {loadingHistory ? (
-            <div className="flex flex-col items-center justify-center py-12 gap-3">
-              <Loader2 className="w-5 h-5 animate-spin text-primary/50" />
-              <p className="text-xs text-muted-foreground/60">Loading chats…</p>
-            </div>
-          ) : filteredConversations.length === 0 ? (
-            <div className="text-center py-12 px-4">
-              <div
-                className="w-14 h-14 rounded-2xl mx-auto mb-3 flex items-center justify-center"
-                style={{
-                  background: "linear-gradient(135deg, color-mix(in oklch, var(--primary), transparent 85%) 0%, color-mix(in oklch, var(--primary), transparent 95%) 100%)",
-                }}
-              >
-                <MessageSquare className="w-6 h-6 text-primary/40" />
+          {/* Conversation list */}
+          <div className="flex-1 overflow-y-auto px-2 pb-2 space-y-0.5 scrollbar-thin">
+            {loadingHistory ? (
+              <div className="flex flex-col items-center justify-center py-12 gap-3">
+                <Loader2 className="w-5 h-5 animate-spin text-primary/50" />
+                <p className="text-xs text-muted-foreground/60">
+                  Loading chats…
+                </p>
               </div>
-              <p className="text-xs font-medium text-muted-foreground/70 mb-1">
-                {searchQuery ? "No results found" : "No conversations yet"}
-              </p>
-              <p className="text-[10px] text-muted-foreground/50">
-                {searchQuery ? "Try a different search" : "Start a new chat to begin"}
-              </p>
-            </div>
-          ) : (
-            filteredConversations.map((conv) => (
-              <div
-                key={conv._id}
-                role="button"
-                tabIndex={0}
-                onClick={() => loadConversation(conv._id)}
-                onKeyDown={(e) =>
-                  e.key === "Enter" && loadConversation(conv._id)
-                }
-                className={`
+            ) : filteredConversations.length === 0 ? (
+              <div className="text-center py-12 px-4">
+                <div
+                  className="w-14 h-14 rounded-2xl mx-auto mb-3 flex items-center justify-center"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, color-mix(in oklch, var(--primary), transparent 85%) 0%, color-mix(in oklch, var(--primary), transparent 95%) 100%)",
+                  }}
+                >
+                  <MessageSquare className="w-6 h-6 text-primary/40" />
+                </div>
+                <p className="text-xs font-medium text-muted-foreground/70 mb-1">
+                  {searchQuery ? "No results found" : "No conversations yet"}
+                </p>
+                <p className="text-[10px] text-muted-foreground/50">
+                  {searchQuery
+                    ? "Try a different search"
+                    : "Start a new chat to begin"}
+                </p>
+              </div>
+            ) : (
+              filteredConversations.map((conv) => (
+                <div
+                  key={conv._id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => loadConversation(conv._id)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && loadConversation(conv._id)
+                  }
+                  className={`
                   group w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5
                   text-left text-sm cursor-pointer
                   transition-all duration-200 ease-out
@@ -556,9 +635,9 @@ export default function ChatPage() {
                       : "text-muted-foreground hover:text-foreground hover:bg-card/80 border border-transparent"
                   }
                 `}
-              >
-                <div
-                  className={`
+                >
+                  <div
+                    className={`
                     flex items-center justify-center w-7 h-7 rounded-lg shrink-0 transition-colors
                     ${
                       activeConversationId === conv._id
@@ -566,252 +645,225 @@ export default function ChatPage() {
                         : "bg-muted/50 group-hover:bg-primary/10"
                     }
                   `}
-                >
-                  <MessageSquare
-                    className={`w-3.5 h-3.5 transition-colors ${
-                      activeConversationId === conv._id
-                        ? "text-primary"
-                        : "text-muted-foreground/50 group-hover:text-primary/70"
-                    }`}
-                  />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className={`truncate text-[13px] leading-tight ${
-                    activeConversationId === conv._id ? "font-semibold" : "font-medium"
-                  }`}>
-                    {conv.title}
-                  </p>
-                  <p className="text-[10px] opacity-50 mt-0.5">
-                    {timeAgo(conv.updatedAt)}
-                  </p>
-                </div>
-                <button
-                  onClick={(e) => deleteConversation(conv._id, e)}
-                  className="
+                  >
+                    <MessageSquare
+                      className={`w-3.5 h-3.5 transition-colors ${
+                        activeConversationId === conv._id
+                          ? "text-primary"
+                          : "text-muted-foreground/50 group-hover:text-primary/70"
+                      }`}
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p
+                      className={`truncate text-[13px] leading-tight ${
+                        activeConversationId === conv._id
+                          ? "font-semibold"
+                          : "font-medium"
+                      }`}
+                    >
+                      {conv.title}
+                    </p>
+                    <p className="text-[10px] opacity-50 mt-0.5">
+                      {timeAgo(conv.updatedAt)}
+                    </p>
+                  </div>
+                  <button
+                    onClick={(e) => deleteConversation(conv._id, e)}
+                    className="
                     opacity-0 group-hover:opacity-100 transition-all duration-200
                     p-1.5 hover:bg-destructive/10 hover:text-destructive rounded-lg
                   "
-                >
-                  <Trash2 className="w-3 h-3" />
-                </button>
-              </div>
-            ))
-          )}
-        </div>
-
-        {/* Sidebar Footer */}
-        <div className="px-4 py-3 border-t border-border/40">
-          <p className="text-[10px] text-muted-foreground/40 text-center">
-            {conversations.length} conversation{conversations.length !== 1 ? "s" : ""}
-          </p>
-        </div>
-      </div>
-
-      {/* ═══ MAIN CHAT AREA ═══ */}
-      <div className="flex-1 flex flex-col min-w-0 relative">
-        {/* Subtle background pattern */}
-        <div
-          className="absolute inset-0 pointer-events-none opacity-30"
-          style={{
-            backgroundImage: `radial-gradient(color-mix(in oklch, var(--primary), transparent 95%) 1px, transparent 1px)`,
-            backgroundSize: "24px 24px",
-          }}
-        />
-
-        {/* Top bar */}
-        <div
-          className="relative z-10 flex items-center gap-3 px-4 py-3 border-b border-border/50"
-          style={{
-            background: "color-mix(in oklch, var(--card), transparent 30%)",
-            backdropFilter: "blur(12px)",
-          }}
-        >
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-9 w-9 shrink-0 rounded-xl hover:bg-primary/10 transition-colors"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            {sidebarOpen ? (
-              <PanelLeftClose className="w-4 h-4" />
-            ) : (
-              <PanelLeftOpen className="w-4 h-4" />
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
+              ))
             )}
-          </Button>
-
-          <div className="flex items-center gap-3 min-w-0">
-            <div
-              className="flex items-center justify-center w-10 h-10 rounded-2xl relative overflow-hidden shrink-0"
-              style={{
-                background: "linear-gradient(135deg, color-mix(in oklch, var(--primary), transparent 60%) 0%, color-mix(in oklch, var(--primary), transparent 85%) 100%)",
-              }}
-            >
-              <Bot className="w-5 h-5 text-primary relative z-10" />
-              {/* Subtle shine effect */}
-              <div
-                className="absolute inset-0 opacity-30"
-                style={{
-                  background: "linear-gradient(135deg, white 0%, transparent 60%)",
-                }}
-              />
-            </div>
-            <div className="min-w-0">
-              <h1 className="text-sm font-bold text-foreground leading-tight tracking-tight">
-                Moniley AI Advisor
-              </h1>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" style={{ animationDuration: "2s" }} />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-                </span>
-                <p className="text-[11px] text-muted-foreground leading-tight">
-                  Online · Powered by your data
-                </p>
-              </div>
-            </div>
           </div>
 
-          {activeConversationId && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="ml-auto text-xs h-8 gap-1.5 rounded-xl border-border/60 hover:border-primary/40 hover:bg-primary/5 transition-all"
-              onClick={startNewChat}
-            >
-              <Plus className="w-3.5 h-3.5" />
-              New Chat
-            </Button>
-          )}
+          {/* Sidebar Footer */}
+          <div className="px-4 py-3 border-t border-border/40">
+            <p className="text-[10px] text-muted-foreground/40 text-center">
+              {conversations.length} conversation
+              {conversations.length !== 1 ? "s" : ""}
+            </p>
+          </div>
         </div>
 
-        {/* Messages area */}
-        <div
-          ref={chatContainerRef}
-          onScroll={handleScroll}
-          className="relative z-10 flex-1 overflow-y-auto scroll-smooth"
-        >
-          {messages.length === 0 ? (
-            /* ── Empty state ── */
-            <div className="flex flex-col items-center justify-center h-full max-w-2xl mx-auto text-center px-6 py-10">
-              {/* Animated orb */}
-              <div className="relative mb-8">
-                {/* Outer glow rings */}
-                <div
-                  className="absolute -inset-8 rounded-full animate-pulse opacity-20"
-                  style={{
-                    background: "radial-gradient(circle, var(--primary) 0%, transparent 70%)",
-                    animationDuration: "3s",
-                  }}
-                />
-                <div
-                  className="absolute -inset-4 rounded-full animate-pulse opacity-10"
-                  style={{
-                    background: "radial-gradient(circle, var(--primary) 0%, transparent 70%)",
-                    animationDuration: "2s",
-                    animationDelay: "0.5s",
-                  }}
-                />
-                {/* Main icon container */}
-                <div
-                  className="relative flex items-center justify-center w-24 h-24 rounded-3xl overflow-hidden"
-                  style={{
-                    background: "linear-gradient(135deg, color-mix(in oklch, var(--primary), transparent 60%) 0%, color-mix(in oklch, var(--primary), transparent 85%) 100%)",
-                    boxShadow: "0 8px 32px color-mix(in oklch, var(--primary), transparent 80%)",
-                  }}
-                >
-                  <Bot className="w-12 h-12 text-primary" />
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: "linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%)",
-                    }}
-                  />
+        {/* ═══ MAIN CHAT AREA ═══ */}
+        <div className="flex-1 flex flex-col min-w-0 min-h-0 relative">
+          {/* Subtle background pattern */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-25"
+            style={{
+              backgroundImage:
+                "radial-gradient(color-mix(in oklch, var(--primary), transparent 96%) 1px, transparent 1px)",
+              backgroundSize: "26px 26px",
+            }}
+          />
+
+          {/* Top bar */}
+          <div
+            className="relative z-10 flex items-center gap-3 px-4 md:px-5 py-3 border-b border-border/50"
+            style={{
+              background: "color-mix(in oklch, var(--card), transparent 30%)",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 shrink-0 rounded-xl hover:bg-primary/10 transition-colors"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              {sidebarOpen ? (
+                <PanelLeftClose className="w-4 h-4" />
+              ) : (
+                <PanelLeftOpen className="w-4 h-4" />
+              )}
+            </Button>
+
+            <div className="flex items-center gap-3 min-w-0">
+              <AssistantAvatar size="md" />
+              <div className="min-w-0">
+                <h1 className="text-sm font-bold text-foreground leading-tight tracking-tight">
+                  Moniley AI Advisor
+                </h1>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="relative flex h-2 w-2">
+                    <span
+                      className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"
+                      style={{ animationDuration: "2s" }}
+                    />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                  </span>
+                  <p className="text-[11px] text-muted-foreground leading-tight">
+                    Online · Powered by your data
+                  </p>
                 </div>
               </div>
+            </div>
 
-              <h2 className="text-2xl font-bold text-foreground mb-2 tracking-tight">
-                Hi! I&apos;m your Financial Advisor
-              </h2>
-              <p className="text-sm text-muted-foreground mb-10 max-w-md leading-relaxed">
-                I have real-time access to your financial data. Ask me anything about
-                your spending, budgets, savings, or get personalized advice.
-              </p>
+            {activeConversationId && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="ml-auto text-xs h-8 gap-1.5 rounded-xl border-border/60 hover:border-primary/40 hover:bg-primary/5 transition-all"
+                onClick={startNewChat}
+              >
+                <Plus className="w-3.5 h-3.5" />
+                New Chat
+              </Button>
+            )}
+          </div>
 
-              {/* Prompt cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
-                {SUGGESTED_PROMPTS.map((sp) => {
-                  const Icon = sp.icon;
-                  return (
-                    <button
-                      key={sp.title}
-                      onClick={() => sendMessage(sp.prompt)}
-                      className="
+          {/* Messages area */}
+          <div
+            ref={chatContainerRef}
+            onScroll={handleScroll}
+            className="relative z-10 flex-1 overflow-y-auto scroll-smooth min-h-0"
+          >
+            {messages.length === 0 ? (
+              /* ── Empty state ── */
+              <div className="flex flex-col items-center justify-center h-full max-w-4xl mx-auto text-center px-4 md:px-6 py-6">
+                {/* Animated orb */}
+                <div className="relative mb-4 md:mb-6">
+                  {/* Outer glow rings */}
+                  <div
+                    className="absolute -inset-8 rounded-full animate-pulse opacity-20"
+                    style={{
+                      background:
+                        "radial-gradient(circle, var(--primary) 0%, transparent 70%)",
+                      animationDuration: "3s",
+                    }}
+                  />
+                  <div
+                    className="absolute -inset-4 rounded-full animate-pulse opacity-10"
+                    style={{
+                      background:
+                        "radial-gradient(circle, var(--primary) 0%, transparent 70%)",
+                      animationDuration: "2s",
+                      animationDelay: "0.5s",
+                    }}
+                  />
+                  {/* Main icon container */}
+                  <AssistantAvatar size="lg" />
+                </div>
+
+                <h2 className="text-2xl font-bold text-foreground mb-2 tracking-tight">
+                  Hi! I&apos;m your Financial Advisor
+                </h2>
+                <p className="text-sm text-muted-foreground mb-6 max-w-md leading-relaxed">
+                  I have real-time access to your financial data. Ask me
+                  anything about your spending, budgets, savings, or get
+                  personalized advice.
+                </p>
+
+                {/* Prompt cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
+                  {SUGGESTED_PROMPTS.map((sp) => {
+                    const Icon = sp.icon;
+                    return (
+                      <button
+                        key={sp.title}
+                        onClick={() => sendMessage(sp.prompt)}
+                        className="
                         group relative flex items-start gap-3 p-4 rounded-2xl
                         bg-card/80 border border-border/50
                         hover:border-primary/30 hover:shadow-lg
                         transition-all duration-300 text-left overflow-hidden
                       "
-                      style={{
-                        backdropFilter: "blur(8px)",
-                      }}
-                    >
-                      {/* Hover gradient overlay */}
-                      <div
-                        className={`absolute inset-0 bg-gradient-to-br ${sp.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
-                      />
-                      <div
-                        className={`
-                          relative z-10 flex items-center justify-center w-9 h-9 rounded-xl shrink-0
-                          bg-gradient-to-br ${sp.gradient} transition-transform duration-300
-                          group-hover:scale-110
-                        `}
-                      >
-                        <Icon className={`w-4.5 h-4.5 ${sp.iconColor}`} />
-                      </div>
-                      <div className="relative z-10 min-w-0">
-                        <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
-                          {sp.title}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 leading-relaxed">
-                          {sp.prompt}
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ) : (
-            /* ── Messages ── */
-            <div className="max-w-3xl mx-auto px-4 py-6 space-y-1">
-              {messages.map((msg, idx) => (
-                <div
-                  key={idx}
-                  className={`flex gap-3 py-3 animate-in fade-in slide-in-from-bottom-2 duration-300 ${
-                    msg.role === "user" ? "justify-end" : "justify-start"
-                  }`}
-                >
-                  {/* Assistant avatar */}
-                  {msg.role === "assistant" && (
-                    <div className="shrink-0 mt-1">
-                      <div
-                        className="flex items-center justify-center w-8 h-8 rounded-xl relative overflow-hidden"
                         style={{
-                          background: "linear-gradient(135deg, color-mix(in oklch, var(--primary), transparent 60%) 0%, color-mix(in oklch, var(--primary), transparent 85%) 100%)",
+                          backdropFilter: "blur(8px)",
                         }}
                       >
-                        <Bot className="w-4 h-4 text-primary relative z-10" />
+                        {/* Hover gradient overlay */}
                         <div
-                          className="absolute inset-0 opacity-30"
-                          style={{ background: "linear-gradient(135deg, white 0%, transparent 60%)" }}
+                          className={`absolute inset-0 bg-linear-to-br ${sp.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
                         />
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Message bubble */}
+                        <div
+                          className={`
+                          relative z-10 flex items-center justify-center w-9 h-9 rounded-xl shrink-0
+                          bg-linear-to-br ${sp.gradient} transition-transform duration-300
+                          group-hover:scale-110
+                        `}
+                        >
+                          <Icon className={`w-4 h-4 ${sp.iconColor}`} />
+                        </div>
+                        <div className="relative z-10 min-w-0">
+                          <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                            {sp.title}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 leading-relaxed">
+                            {sp.prompt}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              /* ── Messages ── */
+              <div className="max-w-4xl mx-auto px-4 py-6 space-y-1">
+                {messages.map((msg, idx) => (
                   <div
-                    className={`
+                    key={idx}
+                    className={`flex gap-3 py-3 animate-in fade-in slide-in-from-bottom-2 duration-300 ${
+                      msg.role === "user" ? "justify-end" : "justify-start"
+                    }`}
+                  >
+                    {/* Assistant avatar */}
+                    {msg.role === "assistant" && (
+                      <div className="shrink-0 mt-1">
+                        <AssistantAvatar size="sm" />
+                      </div>
+                    )}
+
+                    {/* Message bubble */}
+                    <div
+                      className={`
                       max-w-[78%] rounded-2xl px-4 py-3 transition-all
                       ${
                         msg.role === "user"
@@ -819,92 +871,98 @@ export default function ChatPage() {
                           : "rounded-bl-lg border border-border/50 shadow-sm"
                       }
                     `}
-                    style={
-                      msg.role === "user"
-                        ? {
-                            background: "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 15%) 100%)",
-                            boxShadow: "0 4px 12px color-mix(in oklch, var(--primary), transparent 70%)",
-                          }
-                        : {
-                            background: "color-mix(in oklch, var(--card), var(--background) 20%)",
-                          }
-                    }
-                  >
-                    {msg.role === "assistant" ? (
-                      msg.content ? (
-                        <div className="prose-sm">{renderMarkdown(msg.content)}</div>
+                      style={
+                        msg.role === "user"
+                          ? {
+                              background:
+                                "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 15%) 100%)",
+                              boxShadow:
+                                "0 4px 12px color-mix(in oklch, var(--primary), transparent 70%)",
+                            }
+                          : {
+                              background:
+                                "color-mix(in oklch, var(--card), var(--background) 20%)",
+                            }
+                      }
+                    >
+                      {msg.role === "assistant" ? (
+                        msg.content ? (
+                          <div className="prose-sm">
+                            {renderMarkdown(msg.content)}
+                          </div>
+                        ) : (
+                          <TypingIndicator />
+                        )
                       ) : (
-                        <TypingIndicator />
-                      )
-                    ) : (
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap">
-                        {msg.content}
-                      </p>
+                        <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                          {msg.content}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* User avatar */}
+                    {msg.role === "user" && (
+                      <div className="shrink-0 mt-1">
+                        <div
+                          className="flex items-center justify-center w-8 h-8 rounded-xl overflow-hidden"
+                          style={{
+                            background:
+                              "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 25%) 100%)",
+                          }}
+                        >
+                          <User className="w-4 h-4 text-primary-foreground" />
+                        </div>
+                      </div>
                     )}
                   </div>
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+            )}
+          </div>
 
-                  {/* User avatar */}
-                  {msg.role === "user" && (
-                    <div className="shrink-0 mt-1">
-                      <div
-                        className="flex items-center justify-center w-8 h-8 rounded-xl overflow-hidden"
-                        style={{
-                          background: "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 25%) 100%)",
-                        }}
-                      >
-                        <User className="w-4 h-4 text-primary-foreground" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-              <div ref={messagesEndRef} />
+          {/* Scroll-to-bottom button */}
+          {showScrollBtn && (
+            <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-20 animate-in fade-in slide-in-from-bottom-2 duration-200">
+              <Button
+                variant="secondary"
+                size="icon"
+                className="rounded-full shadow-lg h-9 w-9 border border-border/50 hover:bg-primary/10 hover:border-primary/30 transition-all"
+                onClick={() => scrollToBottom()}
+              >
+                <ArrowDown className="w-4 h-4" />
+              </Button>
             </div>
           )}
-        </div>
 
-        {/* Scroll-to-bottom button */}
-        {showScrollBtn && (
-          <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-20 animate-in fade-in slide-in-from-bottom-2 duration-200">
-            <Button
-              variant="secondary"
-              size="icon"
-              className="rounded-full shadow-lg h-9 w-9 border border-border/50 hover:bg-primary/10 hover:border-primary/30 transition-all"
-              onClick={() => scrollToBottom()}
-            >
-              <ArrowDown className="w-4 h-4" />
-            </Button>
-          </div>
-        )}
-
-        {/* ── Input area ── */}
-        <div
-          className="relative z-10 border-t border-border/50 px-4 py-4"
-          style={{
-            background: "color-mix(in oklch, var(--card), transparent 30%)",
-            backdropFilter: "blur(12px)",
-          }}
-        >
-          <div className="max-w-3xl mx-auto">
-            {/* Input container with glow on focus */}
-            <div
-              className="
+          {/* ── Input area ── */}
+          <div
+            className="relative z-10 border-t border-border/50 px-4 py-4"
+            style={{
+              background: "color-mix(in oklch, var(--card), transparent 30%)",
+              backdropFilter: "blur(12px)",
+            }}
+          >
+            <div className="max-w-4xl mx-auto">
+              {/* Input container with glow on focus */}
+              <div
+                className="
                 relative flex items-end gap-2
                 p-1.5 rounded-2xl border border-border/60
                 bg-background/80 backdrop-blur-sm
                 transition-all duration-300
                 focus-within:border-primary/40 focus-within:shadow-[0_0_0_3px_color-mix(in_oklch,var(--primary),transparent_90%)]
               "
-            >
-              <textarea
-                ref={textareaRef}
-                value={input}
-                onChange={handleInput}
-                onKeyDown={handleKeyDown}
-                placeholder="Ask about your finances…"
-                disabled={isStreaming}
-                rows={1}
-                className="
+              >
+                <textarea
+                  ref={textareaRef}
+                  value={input}
+                  onChange={handleInput}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Ask about your finances…"
+                  disabled={isStreaming}
+                  rows={1}
+                  className="
                   flex-1 resize-none rounded-xl
                   bg-transparent px-3.5 py-2.5 text-sm
                   placeholder:text-muted-foreground/50
@@ -912,37 +970,41 @@ export default function ChatPage() {
                   disabled:opacity-50 transition-all
                   max-h-40 scrollbar-thin
                 "
-              />
-              <Button
-                onClick={() => sendMessage()}
-                disabled={!input.trim() || isStreaming}
-                size="icon"
-                className="
+                />
+                <Button
+                  onClick={() => sendMessage()}
+                  disabled={!input.trim() || isStreaming}
+                  size="icon"
+                  className="
                   h-10 w-10 rounded-xl shrink-0
                   disabled:opacity-20 disabled:bg-muted
                   transition-all duration-200
                 "
-                style={
-                  input.trim() && !isStreaming
-                    ? {
-                        background: "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 15%) 100%)",
-                        boxShadow: "0 4px 12px color-mix(in oklch, var(--primary), transparent 60%)",
-                      }
-                    : undefined
-                }
-              >
-                {isStreaming ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                ) : (
-                  <Send className="w-4 h-4" />
-                )}
-              </Button>
-            </div>
-            <div className="flex items-center justify-center gap-2 mt-2.5">
-              <Sparkles className="w-3 h-3 text-primary/30" />
-              <p className="text-[10px] text-muted-foreground/50">
-                Moniley AI uses your financial data for personalized advice · Enter to send, Shift+Enter for new line
-              </p>
+                  style={
+                    input.trim() && !isStreaming
+                      ? {
+                          background:
+                            "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 15%) 100%)",
+                          boxShadow:
+                            "0 4px 12px color-mix(in oklch, var(--primary), transparent 60%)",
+                        }
+                      : undefined
+                  }
+                >
+                  {isStreaming ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
+              <div className="flex items-center justify-center gap-2 mt-2.5">
+                <Sparkles className="w-3 h-3 text-primary/30" />
+                <p className="text-[10px] text-muted-foreground/50">
+                  Moniley AI uses your financial data for personalized advice ·
+                  Enter to send, Shift+Enter for new line
+                </p>
+              </div>
             </div>
           </div>
         </div>
