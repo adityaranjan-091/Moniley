@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="public/logo.png" alt="Moniley Logo" width="150" />
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
   <img src="https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
@@ -8,7 +12,7 @@
   <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
 </p>
 
-<h1 align="center">💰 Moniley</h1>
+<h1 align="center">Moniley</h1>
 
 <p align="center">
   <strong>Your AI-Powered Personal Finance Dashboard</strong>
@@ -20,71 +24,71 @@
 
 ---
 
-## ✨ Overview
+## Overview
 
 **Moniley** is a full-stack personal finance management application built with **Next.js 16** and powered by **Google's Gemini AI**. It provides a modern, responsive dashboard where users can track income and expenses, manage budgets, set savings goals, generate financial reports, and chat with an AI financial advisor that has real-time access to their financial data.
 
-> 🚧 **Status:** Currently in Beta
+> **Status:** Currently in Beta
 
 ---
 
-## 🎯 Key Features
+## Key Features
 
-### 📊 Financial Dashboard
+### Financial Dashboard
 - **Real-time financial snapshot** — Total balance, monthly income, expenses, and net savings at a glance
 - **Expense breakdown** — Interactive donut chart powered by Recharts showing category-wise spending
 - **Recent transactions** — Quick view of your latest financial activity
 - **Global search** — Search transactions directly from the navbar
 
-### 🤖 AI-Powered Features
+### AI-Powered Features
 - **AI Financial Advisor (RAG Chatbot)** — Chat with Moniley AI, which has access to your real financial data including transactions, budgets, categories, and savings goals. Provides personalized, actionable advice with streaming responses.
-- **Smart Transaction Categorization** — Type a natural language description (e.g., *"Bought 2 coffees for ₹150 yesterday"*) and let Gemini AI automatically extract the amount, category, date, and description to auto-fill forms.
+- **Smart Transaction Categorization** — Type a natural language description (e.g., *"Bought 2 coffees for Rs 150 yesterday"*) and let Gemini AI automatically extract the amount, category, date, and description to auto-fill forms.
 
-### 💸 Income & Expense Tracking
+### Income & Expense Tracking
 - Add, view, and delete income/expense transactions
 - AI Smart Entry for hands-free form filling
 - Category-based organization with datalist suggestions
 - Running totals and transaction counts
 
-### 📁 Category Management
+### Category Management
 - Create custom income and expense categories
 - Categories are per-user and persist in the database
 - AI-generated categories auto-save for future use
 
-### 💰 Budget Management
+### Budget Management
 - Set monthly budgets per category
 - Visual progress bars showing spend vs. budget
-- Over-budget warnings (🔴 / ⚠️ / ✅ indicators)
+- Over-budget warnings and visual indicators
 
-### 🎯 Savings Goals
+### Savings Goals
 - Define financial goals with target amounts and deadlines
-- Track progress against your real savings (Income − Expenses)
+- Track progress against your real savings (Income - Expenses)
 - Visual progress cards with percentage completion
 
-### 📈 Reports & Analytics
+### Reports & Analytics
 - **Monthly & Yearly reports** with period comparison
 - **Bar charts** — Daily spending trends (monthly) or monthly trends (yearly)
 - **Pie charts** — Expense breakdown by category
 - **PDF Export** — Generate downloadable PDF reports with jsPDF
 
-### 👤 User Profile
+### User Profile
 - View and edit display name
 - Account stats (total transactions, active budgets)
 - Member since date
 
-### ⚙️ Settings
+### Settings
 - **General** — Theme toggle, appearance preferences
 - **Notifications** — Notification preferences
 - **Security** — Password change, account deletion
 - **Data** — Data export options
 
-### 🔐 Authentication
+### Authentication
 - **Email/Password** sign up & sign in
 - **Google Sign-In** via Firebase Auth
 - Password reset functionality
 - Protected routes with auth gate middleware
 
-### 🎨 Design & UX
+### Design & UX
 - **Dark/Light mode** with smooth transitions
 - **Emerald green** branded theme (oklch color system)
 - **Glassmorphism** effects on navbar and landing page
@@ -95,7 +99,7 @@
 
 ---
 
-## 🏗️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
@@ -115,9 +119,9 @@
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
-```
+```text
 Moniley/
 ├── app/
 │   ├── (auth)/                    # Auth route group
@@ -179,7 +183,7 @@ Moniley/
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -207,10 +211,10 @@ npm install
 Create a `.env.local` file in the root directory:
 
 ```env
-# ─── MongoDB ───────────────────────────────────────
+# MongoDB 
 MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<dbname>
 
-# ─── Firebase ──────────────────────────────────────
+# Firebase 
 NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
@@ -219,7 +223,7 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
 
-# ─── Google Gemini AI ──────────────────────────────
+# Google Gemini AI 
 GEMINI_API_KEY=your_gemini_api_key
 ```
 
@@ -240,25 +244,25 @@ npm start
 
 ---
 
-## 🧠 AI Architecture
+## AI Architecture
 
 ### RAG-Based Financial Advisor
 
 The AI chatbot uses a **Retrieval-Augmented Generation (RAG)** pattern:
 
-```
+```text
 ┌─────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│  User Query  │────▶│  Fetch Financial │────▶│   Build Context  │
-│              │     │  Data (MongoDB)  │     │   (RAG Snapshot)  │
-└─────────────┘     └──────────────────┘     └────────┬──────────┘
-                                                       │
-                    ┌──────────────────┐     ┌─────────▼──────────┐
-                    │  Stream Response │◀────│   Gemini 2.5 Flash │
-                    │  (SSE to Client) │     │   + System Prompt  │
-                    └──────────────────┘     └────────────────────┘
+│  User Query │────▶│  Fetch Financial │────▶│   Build Context │
+│             │     │  Data (MongoDB)  │     │   (RAG Snapshot)│
+└─────────────┘     └──────────────────┘     └────────┬────────┘
+                                                      │
+                    ┌──────────────────┐     ┌────────▼────────┐
+                    │  Stream Response │◀────│   Gemini Flash  │
+                    │  (SSE to Client) │     │ + System Prompt │
+                    └──────────────────┘     └─────────────────┘
 ```
 
-**Context includes:** Monthly income/expenses, savings rate, budget status, expense breakdown, savings goals, recent transactions, and configured categories — all fetched in real-time from MongoDB.
+**Context includes:** Monthly income/expenses, savings rate, budget status, expense breakdown, savings goals, recent transactions, and configured categories - all fetched in real-time from MongoDB.
 
 ### Smart Categorization
 
@@ -266,7 +270,7 @@ Uses Gemini AI to parse natural language transaction descriptions into structure
 
 ---
 
-## 📸 Pages at a Glance
+## Pages at a Glance
 
 | Page | Description |
 |---|---|
@@ -286,7 +290,7 @@ Uses Gemini AI to parse natural language transaction descriptions into structure
 
 ---
 
-## 🗃️ Database Collections
+## Database Collections
 
 | Collection | Description |
 |---|---|
@@ -299,7 +303,7 @@ Uses Gemini AI to parse natural language transaction descriptions into structure
 
 ---
 
-## 📜 Available Scripts
+## Available Scripts
 
 | Command | Description |
 |---|---|
@@ -310,7 +314,7 @@ Uses Gemini AI to parse natural language transaction descriptions into structure
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
 
@@ -322,12 +326,12 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 
 ---
 
-## 📄 License
+## License
 
 This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
 <p align="center">
-  Built with 💚 by <a href="https://github.com/adityaranjan-091">Aditya Ranjan</a>
+  Built by <a href="https://github.com/adityaranjan-091">Aditya Ranjan</a>
 </p>
