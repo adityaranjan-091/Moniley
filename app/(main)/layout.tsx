@@ -17,7 +17,7 @@ export default function DashboardLayout({
           <Navbar />
 
           {/* 2. Inner Container: Flex Row (Sidebar | Content) */}
-          <div className="flex flex-1 overflow-hidden pt-20">
+          <div className="flex flex-1 overflow-hidden pt-14">
             {/* Left: Sidebar (Sits below navbar due to flex-col parent) */}
             <AppSidebar />
 

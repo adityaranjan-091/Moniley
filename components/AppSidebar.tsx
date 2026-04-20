@@ -47,7 +47,7 @@ export default function AppSidebar() {
     <Sidebar
       collapsible="icon"
       /* Fix: Sit below the 4rem sticky navbar and take remaining height */
-      className="top-16 h-[calc(100svh-4rem)] border-r bg-background"
+      className="top-14 h-[calc(100svh-3.5rem)] border-r bg-background"
     >
       <SidebarContent className="pt-4">
         <SidebarGroup>

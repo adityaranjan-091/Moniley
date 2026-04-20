@@ -37,8 +37,8 @@ export default function Navbar() {
   }
 
   return (
-    <header className="fixed left-1/2 top-2 z-50 w-[calc(100%-0.75rem)] max-w-7xl -translate-x-1/2 rounded-2xl border border-border/60 bg-background/60 shadow-[0_12px_32px_-16px_hsl(var(--foreground)/0.45)] ring-1 ring-white/10 backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_42px_-20px_hsl(var(--foreground)/0.55)] supports-backdrop-filter:bg-background/45 sm:top-4 sm:w-[calc(100%-2rem)]">
-      <div className="flex h-12 items-center px-3 sm:h-14 sm:px-6 lg:px-8">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/60 bg-background/70 shadow-sm backdrop-blur-xl supports-backdrop-filter:bg-background/50">
+      <div className="flex h-14 items-center px-3 sm:px-6 lg:px-8">
         {/* LEFT: Sidebar Trigger & Logo */}
         <div className="flex items-center gap-4">
           {/* This button toggles the sidebar */}

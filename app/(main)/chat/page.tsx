@@ -12,9 +12,14 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   ArrowDown,
+  User,
+  Zap,
+  TrendingUp,
+  PiggyBank,
+  Target,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { useAuth } from "@/hooks/use-auth";
 
 // ── Types ────────────────────────────────────────────────────────────
@@ -36,24 +41,32 @@ type Conversation = {
 
 const SUGGESTED_PROMPTS = [
   {
-    icon: "📊",
+    icon: TrendingUp,
     title: "Monthly Overview",
     prompt: "Give me a detailed overview of my spending this month.",
+    gradient: "from-emerald-500/20 to-teal-500/20",
+    iconColor: "text-emerald-500",
   },
   {
-    icon: "💡",
+    icon: PiggyBank,
     title: "Savings Tips",
     prompt: "Where can I cut back and save more money?",
+    gradient: "from-cyan-500/20 to-blue-500/20",
+    iconColor: "text-cyan-500",
   },
   {
-    icon: "🎯",
+    icon: Target,
     title: "Budget Check",
     prompt: "Am I on track with my budgets this month?",
+    gradient: "from-violet-500/20 to-purple-500/20",
+    iconColor: "text-violet-500",
   },
   {
-    icon: "📈",
-    title: "Spending Patterns",
+    icon: Zap,
+    title: "Smart Insights",
     prompt: "Analyze my spending patterns and give me insights.",
+    gradient: "from-amber-500/20 to-orange-500/20",
+    iconColor: "text-amber-500",
   },
 ];
 
@@ -70,7 +83,7 @@ function renderMarkdown(text: string) {
   const flushList = () => {
     if (listItems.length > 0) {
       elements.push(
-        <ul key={`list-${listKey++}`} className="my-2 ml-4 space-y-1 list-disc">
+        <ul key={`list-${listKey++}`} className="my-2 ml-4 space-y-1.5 list-none">
           {listItems}
         </ul>,
       );
@@ -92,7 +105,7 @@ function renderMarkdown(text: string) {
       }
       if (match[2]) {
         parts.push(
-          <strong key={match.index} className="font-semibold">
+          <strong key={match.index} className="font-semibold text-foreground">
             {match[2]}
           </strong>,
         );
@@ -100,7 +113,7 @@ function renderMarkdown(text: string) {
         parts.push(
           <code
             key={match.index}
-            className="rounded bg-primary/10 px-1.5 py-0.5 text-xs font-mono"
+            className="rounded-md bg-primary/10 px-1.5 py-0.5 text-xs font-mono text-primary border border-primary/10"
           >
             {match[4]}
           </code>,
@@ -128,7 +141,8 @@ function renderMarkdown(text: string) {
     if (trimmed.startsWith("### ")) {
       flushList();
       elements.push(
-        <h4 key={idx} className="mt-3 mb-1 text-sm font-bold text-foreground">
+        <h4 key={idx} className="mt-4 mb-1.5 text-sm font-bold text-foreground flex items-center gap-2">
+          <span className="w-1 h-4 rounded-full bg-primary/60 shrink-0" />
           {processInline(trimmed.slice(4))}
         </h4>,
       );
@@ -137,7 +151,8 @@ function renderMarkdown(text: string) {
     if (trimmed.startsWith("## ")) {
       flushList();
       elements.push(
-        <h3 key={idx} className="mt-3 mb-1 text-base font-bold text-foreground">
+        <h3 key={idx} className="mt-4 mb-1.5 text-base font-bold text-foreground flex items-center gap-2">
+          <span className="w-1.5 h-5 rounded-full bg-primary/60 shrink-0" />
           {processInline(trimmed.slice(3))}
         </h3>,
       );
@@ -153,8 +168,9 @@ function renderMarkdown(text: string) {
       inList = true;
       const content = trimmed.replace(/^[-*]\s|^\d+\.\s/, "");
       listItems.push(
-        <li key={idx} className="text-sm leading-relaxed">
-          {processInline(content)}
+        <li key={idx} className="text-sm leading-relaxed flex items-start gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-primary/50 mt-2 shrink-0" />
+          <span>{processInline(content)}</span>
         </li>,
       );
       return;
@@ -171,6 +187,32 @@ function renderMarkdown(text: string) {
 
   flushList();
   return elements;
+}
+
+// ── Typing Indicator Component ───────────────────────────────────────
+
+function TypingIndicator() {
+  return (
+    <div className="flex items-center gap-3 py-1">
+      <div className="flex gap-1.5 items-center">
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/40" style={{ animationDuration: "1.4s" }} />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-primary/70" />
+        </span>
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/40" style={{ animationDuration: "1.4s", animationDelay: "200ms" }} />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-primary/70" />
+        </span>
+        <span className="relative flex h-2 w-2">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/40" style={{ animationDuration: "1.4s", animationDelay: "400ms" }} />
+          <span className="relative inline-flex h-2 w-2 rounded-full bg-primary/70" />
+        </span>
+      </div>
+      <span className="text-xs text-muted-foreground animate-pulse">
+        Analyzing your finances…
+      </span>
+    </div>
+  );
 }
 
 // ── Main Component ───────────────────────────────────────────────────
@@ -191,6 +233,7 @@ export default function ChatPage() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [loadingHistory, setLoadingHistory] = useState(true);
   const [showScrollBtn, setShowScrollBtn] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -404,52 +447,97 @@ export default function ChatPage() {
     return `${days}d ago`;
   };
 
+  // ── Filter conversations ──
+  const filteredConversations = conversations.filter((conv) =>
+    conv.title.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
+
   // ── Render ──
   return (
-    <div className="flex h-[calc(100svh-5rem)] gap-0 -m-6 md:-m-8">
+    <div className="flex h-[calc(100svh-3.5rem)] gap-0 -m-6 md:-m-8 overflow-hidden">
       {/* ═══ SIDEBAR — Conversation History ═══ */}
       <div
         className={`
-                    flex flex-col border-r border-border bg-card/50 backdrop-blur-sm
-                    transition-all duration-300 ease-in-out overflow-hidden shrink-0
-                    ${sidebarOpen ? "w-72" : "w-0"}
-                `}
+          flex flex-col border-r border-border/60 shrink-0
+          transition-all duration-300 ease-in-out overflow-hidden
+          ${sidebarOpen ? "w-80" : "w-0"}
+        `}
+        style={{
+          background: "linear-gradient(180deg, var(--card) 0%, color-mix(in oklch, var(--card), var(--background) 30%) 100%)",
+        }}
       >
-        {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10">
-              <Sparkles className="w-4 h-4 text-primary" />
+        {/* Sidebar Header */}
+        <div className="px-4 pt-5 pb-3 space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <div
+                className="flex items-center justify-center w-8 h-8 rounded-xl"
+                style={{
+                  background: "linear-gradient(135deg, color-mix(in oklch, var(--primary), transparent 70%) 0%, color-mix(in oklch, var(--primary), transparent 90%) 100%)",
+                }}
+              >
+                <Sparkles className="w-4 h-4 text-primary" />
+              </div>
+              <span className="text-sm font-bold text-foreground tracking-tight">
+                Conversations
+              </span>
             </div>
-            <span className="text-sm font-semibold text-foreground">
-              History
-            </span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-xl hover:bg-primary/10 transition-colors"
+              onClick={startNewChat}
+              title="New Chat"
+            >
+              <Plus className="w-4 h-4" />
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7"
-            onClick={startNewChat}
-          >
-            <Plus className="w-4 h-4" />
-          </Button>
+
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground/60" />
+            <input
+              type="text"
+              placeholder="Search conversations…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="
+                w-full pl-9 pr-3 py-2 text-xs rounded-xl
+                bg-background/60 border border-border/50
+                placeholder:text-muted-foreground/50
+                focus:outline-none focus:ring-1 focus:ring-primary/30 focus:border-primary/40
+                transition-all
+              "
+            />
+          </div>
         </div>
 
         {/* Conversation list */}
-        <div className="flex-1 overflow-y-auto p-2 space-y-1">
+        <div className="flex-1 overflow-y-auto px-2 pb-2 space-y-0.5 scrollbar-thin">
           {loadingHistory ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+            <div className="flex flex-col items-center justify-center py-12 gap-3">
+              <Loader2 className="w-5 h-5 animate-spin text-primary/50" />
+              <p className="text-xs text-muted-foreground/60">Loading chats…</p>
             </div>
-          ) : conversations.length === 0 ? (
-            <div className="text-center py-8 px-4">
-              <MessageSquare className="w-8 h-8 mx-auto mb-2 text-muted-foreground/40" />
-              <p className="text-xs text-muted-foreground">
-                No conversations yet
+          ) : filteredConversations.length === 0 ? (
+            <div className="text-center py-12 px-4">
+              <div
+                className="w-14 h-14 rounded-2xl mx-auto mb-3 flex items-center justify-center"
+                style={{
+                  background: "linear-gradient(135deg, color-mix(in oklch, var(--primary), transparent 85%) 0%, color-mix(in oklch, var(--primary), transparent 95%) 100%)",
+                }}
+              >
+                <MessageSquare className="w-6 h-6 text-primary/40" />
+              </div>
+              <p className="text-xs font-medium text-muted-foreground/70 mb-1">
+                {searchQuery ? "No results found" : "No conversations yet"}
+              </p>
+              <p className="text-[10px] text-muted-foreground/50">
+                {searchQuery ? "Try a different search" : "Start a new chat to begin"}
               </p>
             </div>
           ) : (
-            conversations.map((conv) => (
+            filteredConversations.map((conv) => (
               <div
                 key={conv._id}
                 role="button"
@@ -459,26 +547,50 @@ export default function ChatPage() {
                   e.key === "Enter" && loadConversation(conv._id)
                 }
                 className={`
-                                    group w-full flex items-center gap-2 rounded-lg px-3 py-2.5
-                                    text-left text-sm transition-all duration-150 cursor-pointer
-                                    hover:bg-primary/5
-                                    ${
-                                      activeConversationId === conv._id
-                                        ? "bg-primary/10 text-primary font-medium"
-                                        : "text-muted-foreground hover:text-foreground"
-                                    }
-                                `}
+                  group w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5
+                  text-left text-sm cursor-pointer
+                  transition-all duration-200 ease-out
+                  ${
+                    activeConversationId === conv._id
+                      ? "bg-primary/10 text-foreground shadow-sm border border-primary/15"
+                      : "text-muted-foreground hover:text-foreground hover:bg-card/80 border border-transparent"
+                  }
+                `}
               >
-                <MessageSquare className="w-3.5 h-3.5 shrink-0 opacity-50" />
+                <div
+                  className={`
+                    flex items-center justify-center w-7 h-7 rounded-lg shrink-0 transition-colors
+                    ${
+                      activeConversationId === conv._id
+                        ? "bg-primary/15"
+                        : "bg-muted/50 group-hover:bg-primary/10"
+                    }
+                  `}
+                >
+                  <MessageSquare
+                    className={`w-3.5 h-3.5 transition-colors ${
+                      activeConversationId === conv._id
+                        ? "text-primary"
+                        : "text-muted-foreground/50 group-hover:text-primary/70"
+                    }`}
+                  />
+                </div>
                 <div className="flex-1 min-w-0">
-                  <p className="truncate text-sm">{conv.title}</p>
+                  <p className={`truncate text-[13px] leading-tight ${
+                    activeConversationId === conv._id ? "font-semibold" : "font-medium"
+                  }`}>
+                    {conv.title}
+                  </p>
                   <p className="text-[10px] opacity-50 mt-0.5">
                     {timeAgo(conv.updatedAt)}
                   </p>
                 </div>
                 <button
                   onClick={(e) => deleteConversation(conv._id, e)}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:text-destructive rounded"
+                  className="
+                    opacity-0 group-hover:opacity-100 transition-all duration-200
+                    p-1.5 hover:bg-destructive/10 hover:text-destructive rounded-lg
+                  "
                 >
                   <Trash2 className="w-3 h-3" />
                 </button>
@@ -486,16 +598,38 @@ export default function ChatPage() {
             ))
           )}
         </div>
+
+        {/* Sidebar Footer */}
+        <div className="px-4 py-3 border-t border-border/40">
+          <p className="text-[10px] text-muted-foreground/40 text-center">
+            {conversations.length} conversation{conversations.length !== 1 ? "s" : ""}
+          </p>
+        </div>
       </div>
 
       {/* ═══ MAIN CHAT AREA ═══ */}
-      <div className="flex-1 flex flex-col min-w-0 bg-background">
+      <div className="flex-1 flex flex-col min-w-0 relative">
+        {/* Subtle background pattern */}
+        <div
+          className="absolute inset-0 pointer-events-none opacity-30"
+          style={{
+            backgroundImage: `radial-gradient(color-mix(in oklch, var(--primary), transparent 95%) 1px, transparent 1px)`,
+            backgroundSize: "24px 24px",
+          }}
+        />
+
         {/* Top bar */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-border bg-card/30 backdrop-blur-sm">
+        <div
+          className="relative z-10 flex items-center gap-3 px-4 py-3 border-b border-border/50"
+          style={{
+            background: "color-mix(in oklch, var(--card), transparent 30%)",
+            backdropFilter: "blur(12px)",
+          }}
+        >
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 shrink-0"
+            className="h-9 w-9 shrink-0 rounded-xl hover:bg-primary/10 transition-colors"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             {sidebarOpen ? (
@@ -504,27 +638,47 @@ export default function ChatPage() {
               <PanelLeftOpen className="w-4 h-4" />
             )}
           </Button>
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-linear-to-br from-primary/20 to-primary/5 border border-primary/10">
-              <Bot className="w-4 h-4 text-primary" />
+
+          <div className="flex items-center gap-3 min-w-0">
+            <div
+              className="flex items-center justify-center w-10 h-10 rounded-2xl relative overflow-hidden shrink-0"
+              style={{
+                background: "linear-gradient(135deg, color-mix(in oklch, var(--primary), transparent 60%) 0%, color-mix(in oklch, var(--primary), transparent 85%) 100%)",
+              }}
+            >
+              <Bot className="w-5 h-5 text-primary relative z-10" />
+              {/* Subtle shine effect */}
+              <div
+                className="absolute inset-0 opacity-30"
+                style={{
+                  background: "linear-gradient(135deg, white 0%, transparent 60%)",
+                }}
+              />
             </div>
             <div className="min-w-0">
-              <h1 className="text-sm font-semibold text-foreground leading-tight">
+              <h1 className="text-sm font-bold text-foreground leading-tight tracking-tight">
                 Moniley AI Advisor
               </h1>
-              <p className="text-[11px] text-muted-foreground leading-tight">
-                Powered by your financial data
-              </p>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" style={{ animationDuration: "2s" }} />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                </span>
+                <p className="text-[11px] text-muted-foreground leading-tight">
+                  Online · Powered by your data
+                </p>
+              </div>
             </div>
           </div>
+
           {activeConversationId && (
             <Button
               variant="outline"
               size="sm"
-              className="ml-auto text-xs h-7 gap-1"
+              className="ml-auto text-xs h-8 gap-1.5 rounded-xl border-border/60 hover:border-primary/40 hover:bg-primary/5 transition-all"
               onClick={startNewChat}
             >
-              <Plus className="w-3 h-3" />
+              <Plus className="w-3.5 h-3.5" />
               New Chat
             </Button>
           )}
@@ -534,103 +688,153 @@ export default function ChatPage() {
         <div
           ref={chatContainerRef}
           onScroll={handleScroll}
-          className="flex-1 overflow-y-auto px-4 py-6 scroll-smooth"
+          className="relative z-10 flex-1 overflow-y-auto scroll-smooth"
         >
           {messages.length === 0 ? (
             /* ── Empty state ── */
-            <div className="flex flex-col items-center justify-center h-full max-w-lg mx-auto text-center">
-              <div className="relative mb-6">
-                <div className="absolute inset-0 rounded-full bg-primary/10 blur-2xl scale-150" />
-                <div className="relative flex items-center justify-center w-20 h-20 rounded-2xl bg-linear-to-br from-primary/20 to-primary/5 border border-primary/10">
-                  <Bot className="w-10 h-10 text-primary" />
+            <div className="flex flex-col items-center justify-center h-full max-w-2xl mx-auto text-center px-6 py-10">
+              {/* Animated orb */}
+              <div className="relative mb-8">
+                {/* Outer glow rings */}
+                <div
+                  className="absolute -inset-8 rounded-full animate-pulse opacity-20"
+                  style={{
+                    background: "radial-gradient(circle, var(--primary) 0%, transparent 70%)",
+                    animationDuration: "3s",
+                  }}
+                />
+                <div
+                  className="absolute -inset-4 rounded-full animate-pulse opacity-10"
+                  style={{
+                    background: "radial-gradient(circle, var(--primary) 0%, transparent 70%)",
+                    animationDuration: "2s",
+                    animationDelay: "0.5s",
+                  }}
+                />
+                {/* Main icon container */}
+                <div
+                  className="relative flex items-center justify-center w-24 h-24 rounded-3xl overflow-hidden"
+                  style={{
+                    background: "linear-gradient(135deg, color-mix(in oklch, var(--primary), transparent 60%) 0%, color-mix(in oklch, var(--primary), transparent 85%) 100%)",
+                    boxShadow: "0 8px 32px color-mix(in oklch, var(--primary), transparent 80%)",
+                  }}
+                >
+                  <Bot className="w-12 h-12 text-primary" />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: "linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%)",
+                    }}
+                  />
                 </div>
               </div>
-              <h2 className="text-xl font-bold text-foreground mb-2">
+
+              <h2 className="text-2xl font-bold text-foreground mb-2 tracking-tight">
                 Hi! I&apos;m your Financial Advisor
               </h2>
-              <p className="text-sm text-muted-foreground mb-8 max-w-sm">
-                I have access to your real financial data. Ask me anything about
+              <p className="text-sm text-muted-foreground mb-10 max-w-md leading-relaxed">
+                I have real-time access to your financial data. Ask me anything about
                 your spending, budgets, savings, or get personalized advice.
               </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
-                {SUGGESTED_PROMPTS.map((sp) => (
-                  <button
-                    key={sp.title}
-                    onClick={() => sendMessage(sp.prompt)}
-                    className="
-                                            group flex items-start gap-3 p-4 rounded-xl
-                                            bg-card border border-border
-                                            hover:border-primary/30 hover:bg-primary/5
-                                            transition-all duration-200 text-left
-                                            hover:shadow-md hover:shadow-primary/5
-                                        "
-                  >
-                    <span className="text-xl shrink-0 mt-0.5">{sp.icon}</span>
-                    <div>
-                      <p className="text-sm font-medium text-foreground group-hover:text-primary transition-colors">
-                        {sp.title}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                        {sp.prompt}
-                      </p>
-                    </div>
-                  </button>
-                ))}
+              {/* Prompt cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
+                {SUGGESTED_PROMPTS.map((sp) => {
+                  const Icon = sp.icon;
+                  return (
+                    <button
+                      key={sp.title}
+                      onClick={() => sendMessage(sp.prompt)}
+                      className="
+                        group relative flex items-start gap-3 p-4 rounded-2xl
+                        bg-card/80 border border-border/50
+                        hover:border-primary/30 hover:shadow-lg
+                        transition-all duration-300 text-left overflow-hidden
+                      "
+                      style={{
+                        backdropFilter: "blur(8px)",
+                      }}
+                    >
+                      {/* Hover gradient overlay */}
+                      <div
+                        className={`absolute inset-0 bg-gradient-to-br ${sp.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300`}
+                      />
+                      <div
+                        className={`
+                          relative z-10 flex items-center justify-center w-9 h-9 rounded-xl shrink-0
+                          bg-gradient-to-br ${sp.gradient} transition-transform duration-300
+                          group-hover:scale-110
+                        `}
+                      >
+                        <Icon className={`w-4.5 h-4.5 ${sp.iconColor}`} />
+                      </div>
+                      <div className="relative z-10 min-w-0">
+                        <p className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                          {sp.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 leading-relaxed">
+                          {sp.prompt}
+                        </p>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           ) : (
             /* ── Messages ── */
-            <div className="max-w-3xl mx-auto space-y-6">
+            <div className="max-w-3xl mx-auto px-4 py-6 space-y-1">
               {messages.map((msg, idx) => (
                 <div
                   key={idx}
-                  className={`flex gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300 ${
+                  className={`flex gap-3 py-3 animate-in fade-in slide-in-from-bottom-2 duration-300 ${
                     msg.role === "user" ? "justify-end" : "justify-start"
                   }`}
                 >
+                  {/* Assistant avatar */}
                   {msg.role === "assistant" && (
                     <div className="shrink-0 mt-1">
-                      <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-linear-to-br from-primary/20 to-primary/5 border border-primary/10">
-                        <Bot className="w-4 h-4 text-primary" />
+                      <div
+                        className="flex items-center justify-center w-8 h-8 rounded-xl relative overflow-hidden"
+                        style={{
+                          background: "linear-gradient(135deg, color-mix(in oklch, var(--primary), transparent 60%) 0%, color-mix(in oklch, var(--primary), transparent 85%) 100%)",
+                        }}
+                      >
+                        <Bot className="w-4 h-4 text-primary relative z-10" />
+                        <div
+                          className="absolute inset-0 opacity-30"
+                          style={{ background: "linear-gradient(135deg, white 0%, transparent 60%)" }}
+                        />
                       </div>
                     </div>
                   )}
+
+                  {/* Message bubble */}
                   <div
                     className={`
-                                            max-w-[80%] rounded-2xl px-4 py-3
-                                            ${
-                                              msg.role === "user"
-                                                ? "bg-primary text-primary-foreground rounded-br-md"
-                                                : "bg-card border border-border rounded-bl-md shadow-sm"
-                                            }
-                                        `}
+                      max-w-[78%] rounded-2xl px-4 py-3 transition-all
+                      ${
+                        msg.role === "user"
+                          ? "rounded-br-lg text-primary-foreground"
+                          : "rounded-bl-lg border border-border/50 shadow-sm"
+                      }
+                    `}
+                    style={
+                      msg.role === "user"
+                        ? {
+                            background: "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 15%) 100%)",
+                            boxShadow: "0 4px 12px color-mix(in oklch, var(--primary), transparent 70%)",
+                          }
+                        : {
+                            background: "color-mix(in oklch, var(--card), var(--background) 20%)",
+                          }
+                    }
                   >
                     {msg.role === "assistant" ? (
                       msg.content ? (
-                        <div className="prose-sm">
-                          {renderMarkdown(msg.content)}
-                        </div>
+                        <div className="prose-sm">{renderMarkdown(msg.content)}</div>
                       ) : (
-                        <div className="flex items-center gap-2 py-1">
-                          <div className="flex gap-1">
-                            <span
-                              className="w-2 h-2 rounded-full bg-primary/60 animate-bounce"
-                              style={{ animationDelay: "0ms" }}
-                            />
-                            <span
-                              className="w-2 h-2 rounded-full bg-primary/60 animate-bounce"
-                              style={{ animationDelay: "150ms" }}
-                            />
-                            <span
-                              className="w-2 h-2 rounded-full bg-primary/60 animate-bounce"
-                              style={{ animationDelay: "300ms" }}
-                            />
-                          </div>
-                          <span className="text-xs text-muted-foreground">
-                            Analyzing your finances...
-                          </span>
-                        </div>
+                        <TypingIndicator />
                       )
                     ) : (
                       <p className="text-sm leading-relaxed whitespace-pre-wrap">
@@ -638,6 +842,20 @@ export default function ChatPage() {
                       </p>
                     )}
                   </div>
+
+                  {/* User avatar */}
+                  {msg.role === "user" && (
+                    <div className="shrink-0 mt-1">
+                      <div
+                        className="flex items-center justify-center w-8 h-8 rounded-xl overflow-hidden"
+                        style={{
+                          background: "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 25%) 100%)",
+                        }}
+                      >
+                        <User className="w-4 h-4 text-primary-foreground" />
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
               <div ref={messagesEndRef} />
@@ -647,11 +865,11 @@ export default function ChatPage() {
 
         {/* Scroll-to-bottom button */}
         {showScrollBtn && (
-          <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-10">
+          <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-20 animate-in fade-in slide-in-from-bottom-2 duration-200">
             <Button
               variant="secondary"
               size="icon"
-              className="rounded-full shadow-lg h-8 w-8"
+              className="rounded-full shadow-lg h-9 w-9 border border-border/50 hover:bg-primary/10 hover:border-primary/30 transition-all"
               onClick={() => scrollToBottom()}
             >
               <ArrowDown className="w-4 h-4" />
@@ -660,39 +878,58 @@ export default function ChatPage() {
         )}
 
         {/* ── Input area ── */}
-        <div className="border-t border-border bg-card/30 backdrop-blur-sm px-4 py-3">
+        <div
+          className="relative z-10 border-t border-border/50 px-4 py-4"
+          style={{
+            background: "color-mix(in oklch, var(--card), transparent 30%)",
+            backdropFilter: "blur(12px)",
+          }}
+        >
           <div className="max-w-3xl mx-auto">
-            <div className="flex items-end gap-2">
-              <div className="flex-1 relative">
-                <textarea
-                  ref={textareaRef}
-                  value={input}
-                  onChange={handleInput}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Ask about your finances..."
-                  disabled={isStreaming}
-                  rows={1}
-                  className="
-                                        w-full resize-none rounded-xl border border-border
-                                        bg-background px-4 py-3 pr-12 text-sm
-                                        placeholder:text-muted-foreground
-                                        focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50
-                                        disabled:opacity-50 transition-all
-                                        max-h-40 scrollbar-thin
-                                    "
-                />
-              </div>
+            {/* Input container with glow on focus */}
+            <div
+              className="
+                relative flex items-end gap-2
+                p-1.5 rounded-2xl border border-border/60
+                bg-background/80 backdrop-blur-sm
+                transition-all duration-300
+                focus-within:border-primary/40 focus-within:shadow-[0_0_0_3px_color-mix(in_oklch,var(--primary),transparent_90%)]
+              "
+            >
+              <textarea
+                ref={textareaRef}
+                value={input}
+                onChange={handleInput}
+                onKeyDown={handleKeyDown}
+                placeholder="Ask about your finances…"
+                disabled={isStreaming}
+                rows={1}
+                className="
+                  flex-1 resize-none rounded-xl
+                  bg-transparent px-3.5 py-2.5 text-sm
+                  placeholder:text-muted-foreground/50
+                  focus:outline-none
+                  disabled:opacity-50 transition-all
+                  max-h-40 scrollbar-thin
+                "
+              />
               <Button
                 onClick={() => sendMessage()}
                 disabled={!input.trim() || isStreaming}
                 size="icon"
                 className="
-                                    h-11 w-11 rounded-xl shrink-0
-                                    bg-primary hover:bg-primary/90
-                                    disabled:opacity-30
-                                    transition-all duration-200
-                                    shadow-md shadow-primary/20
-                                "
+                  h-10 w-10 rounded-xl shrink-0
+                  disabled:opacity-20 disabled:bg-muted
+                  transition-all duration-200
+                "
+                style={
+                  input.trim() && !isStreaming
+                    ? {
+                        background: "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 15%) 100%)",
+                        boxShadow: "0 4px 12px color-mix(in oklch, var(--primary), transparent 60%)",
+                      }
+                    : undefined
+                }
               >
                 {isStreaming ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -701,10 +938,12 @@ export default function ChatPage() {
                 )}
               </Button>
             </div>
-            <p className="text-[10px] text-muted-foreground text-center mt-2 opacity-60">
-              Moniley AI uses your financial data for personalized advice. Press
-              Enter to send, Shift+Enter for new line.
-            </p>
+            <div className="flex items-center justify-center gap-2 mt-2.5">
+              <Sparkles className="w-3 h-3 text-primary/30" />
+              <p className="text-[10px] text-muted-foreground/50">
+                Moniley AI uses your financial data for personalized advice · Enter to send, Shift+Enter for new line
+              </p>
+            </div>
           </div>
         </div>
       </div>
