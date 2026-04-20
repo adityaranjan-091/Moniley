@@ -33,12 +33,13 @@ export default function DataSettingsPage() {
 
       if (json.success && json.transactions) {
         const headers = ["Date", "Description", "Category", "Type", "Amount"];
+        const escapeCsv = (val: any) => `"${String(val || "").replace(/"/g, '""')}"`;
         const rows = json.transactions.map((t: any) => [
-          new Date(t.date).toLocaleDateString(),
-          t.description,
-          t.category,
-          t.type,
-          t.amount,
+          escapeCsv(t.date ? new Date(t.date).toLocaleDateString() : (t.createdAt ? new Date(t.createdAt).toLocaleDateString() : "")),
+          escapeCsv(t.description),
+          escapeCsv(t.category),
+          escapeCsv(t.type),
+          t.amount, // amount is a number, safe without quotes
         ]);
 
         const csvContent = [

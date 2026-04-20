@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { format } from "date-fns";
 import {
   BarChart,
@@ -357,8 +357,8 @@ export default function ReportsPage() {
                           )}
                         </Pie>
                         <Tooltip
-                          formatter={(value: number) =>
-                            `₹${value.toLocaleString()}`
+                        formatter={(value: string | number | (string | number)[] | undefined) =>
+                            `₹${Number(value ?? 0).toLocaleString()}`
                           }
                         />
                         <Legend />
