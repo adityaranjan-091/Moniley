@@ -6,7 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/hooks/use-toast"; // assuming hook exists or I'll implement a basic alert
+
 import { useAuth } from "@/hooks/use-auth";
 
 export default function NotificationsSettingsPage() {

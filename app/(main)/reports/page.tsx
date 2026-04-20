@@ -357,7 +357,7 @@ export default function ReportsPage() {
                           )}
                         </Pie>
                         <Tooltip
-                        formatter={(value: string | number | (string | number)[] | undefined) =>
+                          formatter={(value) =>
                             `₹${Number(value ?? 0).toLocaleString()}`
                           }
                         />

@@ -234,48 +234,21 @@ function TypingIndicator() {
 }
 
 function AssistantAvatar({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
-  const sizeClasses = {
-    sm: "h-8 w-8 rounded-xl",
-    md: "h-10 w-10 rounded-2xl",
-    lg: "h-24 w-24 rounded-3xl",
-  };
-
-  const iconClasses = {
-    sm: "h-4 w-4",
-    md: "h-5 w-5",
-    lg: "h-12 w-12",
-  };
-
-  const sparkleClasses = {
-    sm: "h-1.5 w-1.5",
-    md: "h-2 w-2",
-    lg: "h-3.5 w-3.5",
-  };
-
-  const badgeClasses = {
-    sm: "h-3.5 w-3.5 text-[6px]",
-    md: "h-4 w-4 text-[7px]",
-    lg: "h-6 w-6 text-[9px]",
+  const config = {
+    sm: { container: "w-8 h-8 rounded-xl", icon: "w-4 h-4" },
+    md: { container: "w-10 h-10 rounded-2xl", icon: "w-5 h-5" },
+    lg: { container: "w-20 h-20 rounded-3xl", icon: "w-10 h-10" },
   };
 
   return (
     <div
-      className={`relative overflow-hidden border border-primary/20 bg-linear-to-br from-primary/25 via-primary/10 to-background/90 shadow-[0_14px_32px_-20px_color-mix(in_oklch,var(--primary),black_35%)] ${sizeClasses[size]}`}
+      className={`flex items-center justify-center ${config[size].container}`}
+      style={{
+        background: "linear-gradient(145deg, var(--primary), color-mix(in oklch, var(--primary), black 25%))",
+        boxShadow: "0 4px 14px color-mix(in oklch, var(--primary), transparent 65%)",
+      }}
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.65)_0%,transparent_40%)] opacity-80" />
-      <div className="absolute inset-0 bg-[linear-gradient(135deg,transparent_18%,rgba(255,255,255,0.14)_18%,transparent_42%)] opacity-60" />
-      <div className="absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-white/10" />
-      <Bot
-        className={`relative z-10 mx-auto text-primary ${iconClasses[size]}`}
-      />
-      <Sparkles
-        className={`absolute text-primary/80 ${size === "lg" ? "right-3 top-3" : "right-1.5 top-1.5"} ${sparkleClasses[size]}`}
-      />
-      <span
-        className={`absolute flex items-center justify-center rounded-full border border-background/80 bg-background/90 font-semibold text-primary shadow-sm ${size === "lg" ? "bottom-3 right-3" : "bottom-0.5 right-0.5"} ${badgeClasses[size]}`}
-      >
-        AI
-      </span>
+      <Bot className={`${config[size].icon} text-primary-foreground`} />
     </div>
   );
 }
@@ -521,7 +494,7 @@ export default function ChatPage() {
   return (
     <div className="h-[calc(100svh-3.5rem)] -m-6 md:-m-8">
       <div
-        className="flex flex-col md:flex-row h-full overflow-hidden  border border-border/60 bg-background/80 shadow-[0_24px_70px_-35px_rgba(15,23,42,0.35)] backdrop-blur-xl"
+        className="flex flex-col md:flex-row h-full overflow-hidden border border-border/60 bg-background/80 shadow-[0_24px_70px_-35px_rgba(15,23,42,0.35)] backdrop-blur-xl"
         style={{
           background:
             "linear-gradient(180deg, color-mix(in oklch, var(--card), white 6%) 0%, color-mix(in oklch, var(--card), var(--background) 16%) 100%)",
@@ -543,15 +516,6 @@ export default function ChatPage() {
           <div className="px-4 pt-5 pb-3 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div
-                  className="flex items-center justify-center w-8 h-8 rounded-xl"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, color-mix(in oklch, var(--primary), transparent 70%) 0%, color-mix(in oklch, var(--primary), transparent 90%) 100%)",
-                  }}
-                >
-                  <Sparkles className="w-4 h-4 text-primary" />
-                </div>
                 <span className="text-sm font-bold text-foreground tracking-tight">
                   Conversations
                 </span>
@@ -629,38 +593,34 @@ export default function ChatPage() {
                   group w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5
                   text-left text-sm cursor-pointer
                   transition-all duration-200 ease-out
-                  ${
-                    activeConversationId === conv._id
+                  ${activeConversationId === conv._id
                       ? "bg-primary/10 text-foreground shadow-sm border border-primary/15"
                       : "text-muted-foreground hover:text-foreground hover:bg-card/80 border border-transparent"
-                  }
+                    }
                 `}
                 >
                   <div
                     className={`
                     flex items-center justify-center w-7 h-7 rounded-lg shrink-0 transition-colors
-                    ${
-                      activeConversationId === conv._id
+                    ${activeConversationId === conv._id
                         ? "bg-primary/15"
                         : "bg-muted/50 group-hover:bg-primary/10"
-                    }
+                      }
                   `}
                   >
                     <MessageSquare
-                      className={`w-3.5 h-3.5 transition-colors ${
-                        activeConversationId === conv._id
-                          ? "text-primary"
-                          : "text-muted-foreground/50 group-hover:text-primary/70"
-                      }`}
+                      className={`w-3.5 h-3.5 transition-colors ${activeConversationId === conv._id
+                        ? "text-primary"
+                        : "text-muted-foreground/50 group-hover:text-primary/70"
+                        }`}
                     />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p
-                      className={`truncate text-[13px] leading-tight ${
-                        activeConversationId === conv._id
-                          ? "font-semibold"
-                          : "font-medium"
-                      }`}
+                      className={`truncate text-[13px] leading-tight ${activeConversationId === conv._id
+                        ? "font-semibold"
+                        : "font-medium"
+                        }`}
                     >
                       {conv.title}
                     </p>
@@ -767,30 +727,6 @@ export default function ChatPage() {
             {messages.length === 0 ? (
               /* ── Empty state ── */
               <div className="flex flex-col items-center justify-center h-full max-w-4xl mx-auto text-center px-4 md:px-6 py-6">
-                {/* Animated orb */}
-                <div className="relative mb-4 md:mb-6">
-                  {/* Outer glow rings */}
-                  <div
-                    className="absolute -inset-8 rounded-full animate-pulse opacity-20"
-                    style={{
-                      background:
-                        "radial-gradient(circle, var(--primary) 0%, transparent 70%)",
-                      animationDuration: "3s",
-                    }}
-                  />
-                  <div
-                    className="absolute -inset-4 rounded-full animate-pulse opacity-10"
-                    style={{
-                      background:
-                        "radial-gradient(circle, var(--primary) 0%, transparent 70%)",
-                      animationDuration: "2s",
-                      animationDelay: "0.5s",
-                    }}
-                  />
-                  {/* Main icon container */}
-                  <AssistantAvatar size="lg" />
-                </div>
-
                 <h2 className="text-2xl font-bold text-foreground mb-2 tracking-tight">
                   Hi! I&apos;m your Financial Advisor
                 </h2>
@@ -850,9 +786,8 @@ export default function ChatPage() {
                 {messages.map((msg, idx) => (
                   <div
                     key={idx}
-                    className={`flex gap-3 py-3 animate-in fade-in slide-in-from-bottom-2 duration-300 ${
-                      msg.role === "user" ? "justify-end" : "justify-start"
-                    }`}
+                    className={`flex gap-3 py-3 animate-in fade-in slide-in-from-bottom-2 duration-300 ${msg.role === "user" ? "justify-end" : "justify-start"
+                      }`}
                   >
                     {/* Assistant avatar */}
                     {msg.role === "assistant" && (
@@ -865,24 +800,23 @@ export default function ChatPage() {
                     <div
                       className={`
                       max-w-[78%] rounded-2xl px-4 py-3 transition-all
-                      ${
-                        msg.role === "user"
+                      ${msg.role === "user"
                           ? "rounded-br-lg text-primary-foreground"
                           : "rounded-bl-lg border border-border/50 shadow-sm"
-                      }
+                        }
                     `}
                       style={
                         msg.role === "user"
                           ? {
-                              background:
-                                "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 15%) 100%)",
-                              boxShadow:
-                                "0 4px 12px color-mix(in oklch, var(--primary), transparent 70%)",
-                            }
+                            background:
+                              "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 15%) 100%)",
+                            boxShadow:
+                              "0 4px 12px color-mix(in oklch, var(--primary), transparent 70%)",
+                          }
                           : {
-                              background:
-                                "color-mix(in oklch, var(--card), var(--background) 20%)",
-                            }
+                            background:
+                              "color-mix(in oklch, var(--card), var(--background) 20%)",
+                          }
                       }
                     >
                       {msg.role === "assistant" ? (
@@ -983,11 +917,11 @@ export default function ChatPage() {
                   style={
                     input.trim() && !isStreaming
                       ? {
-                          background:
-                            "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 15%) 100%)",
-                          boxShadow:
-                            "0 4px 12px color-mix(in oklch, var(--primary), transparent 60%)",
-                        }
+                        background:
+                          "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 15%) 100%)",
+                        boxShadow:
+                          "0 4px 12px color-mix(in oklch, var(--primary), transparent 60%)",
+                      }
                       : undefined
                   }
                 >
