@@ -44,29 +44,29 @@ const SUGGESTED_PROMPTS = [
     icon: TrendingUp,
     title: "Monthly Overview",
     prompt: "Give me a detailed overview of my spending this month.",
-    gradient: "from-emerald-500/20 to-teal-500/20",
-    iconColor: "text-emerald-500",
+    gradient: "from-primary/20 to-primary/5",
+    iconColor: "text-primary",
   },
   {
     icon: PiggyBank,
     title: "Savings Tips",
     prompt: "Where can I cut back and save more money?",
-    gradient: "from-cyan-500/20 to-blue-500/20",
-    iconColor: "text-cyan-500",
+    gradient: "from-teal-500/20 to-teal-500/5",
+    iconColor: "text-teal-500",
   },
   {
     icon: Target,
     title: "Budget Check",
     prompt: "Am I on track with my budgets this month?",
-    gradient: "from-violet-500/20 to-purple-500/20",
-    iconColor: "text-violet-500",
+    gradient: "from-emerald-400/20 to-emerald-400/5",
+    iconColor: "text-emerald-500",
   },
   {
     icon: Zap,
     title: "Smart Insights",
     prompt: "Analyze my spending patterns and give me insights.",
-    gradient: "from-amber-500/20 to-orange-500/20",
-    iconColor: "text-amber-500",
+    gradient: "from-cyan-500/20 to-cyan-500/5",
+    iconColor: "text-cyan-500",
   },
 ];
 
@@ -523,11 +523,11 @@ export default function ChatPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8 rounded-xl hover:bg-primary/10 transition-colors"
+                className="h-8 w-8 rounded-xl hover:bg-primary/15 transition-all duration-300 hover:scale-105"
                 onClick={startNewChat}
                 title="New Chat"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-4 h-4 text-primary" />
               </Button>
             </div>
 
@@ -592,9 +592,9 @@ export default function ChatPage() {
                   className={`
                   group w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5
                   text-left text-sm cursor-pointer
-                  transition-all duration-200 ease-out
+                  transition-all duration-300 ease-out relative overflow-hidden
                   ${activeConversationId === conv._id
-                      ? "bg-primary/10 text-foreground shadow-sm border border-primary/15"
+                      ? "bg-primary/10 text-foreground border border-primary/20 shadow-[0_2px_10px_color-mix(in_oklch,var(--primary),transparent_90%)]"
                       : "text-muted-foreground hover:text-foreground hover:bg-card/80 border border-transparent"
                     }
                 `}
@@ -746,12 +746,12 @@ export default function ChatPage() {
                         onClick={() => sendMessage(sp.prompt)}
                         className="
                         group relative flex items-start gap-3 p-4 rounded-2xl
-                        bg-card/80 border border-border/50
-                        hover:border-primary/30 hover:shadow-lg
+                        bg-card/60 border border-border/40
+                        hover:border-primary/40 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:-translate-y-0.5
                         transition-all duration-300 text-left overflow-hidden
                       "
                         style={{
-                          backdropFilter: "blur(8px)",
+                          backdropFilter: "blur(12px)",
                         }}
                       >
                         {/* Hover gradient overlay */}
@@ -801,21 +801,21 @@ export default function ChatPage() {
                       className={`
                       max-w-[78%] rounded-2xl px-4 py-3 transition-all
                       ${msg.role === "user"
-                          ? "rounded-br-lg text-primary-foreground"
-                          : "rounded-bl-lg border border-border/50 shadow-sm"
+                          ? "rounded-br-[4px] text-primary-foreground shadow-md"
+                          : "rounded-bl-[4px] border border-border/40 shadow-sm"
                         }
                     `}
                       style={
                         msg.role === "user"
                           ? {
                             background:
-                              "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 15%) 100%)",
+                              "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 20%) 100%)",
                             boxShadow:
-                              "0 4px 12px color-mix(in oklch, var(--primary), transparent 70%)",
+                              "0 4px 15px color-mix(in oklch, var(--primary), transparent 60%)",
                           }
                           : {
                             background:
-                              "color-mix(in oklch, var(--card), var(--background) 20%)",
+                              "color-mix(in oklch, var(--card), var(--background) 10%)",
                           }
                       }
                     >
@@ -871,10 +871,9 @@ export default function ChatPage() {
 
           {/* ── Input area ── */}
           <div
-            className="relative z-10 border-t border-border/50 px-4 py-4"
+            className="relative z-10 px-4 py-4 md:pb-6"
             style={{
-              background: "color-mix(in oklch, var(--card), transparent 30%)",
-              backdropFilter: "blur(12px)",
+              background: "linear-gradient(to top, var(--background) 40%, transparent)",
             }}
           >
             <div className="max-w-4xl mx-auto">
@@ -882,10 +881,10 @@ export default function ChatPage() {
               <div
                 className="
                 relative flex items-end gap-2
-                p-1.5 rounded-2xl border border-border/60
-                bg-background/80 backdrop-blur-sm
+                p-1.5 rounded-3xl border border-border/40
+                bg-card/60 backdrop-blur-xl shadow-lg
                 transition-all duration-300
-                focus-within:border-primary/40 focus-within:shadow-[0_0_0_3px_color-mix(in_oklch,var(--primary),transparent_90%)]
+                focus-within:border-primary/50 focus-within:shadow-[0_8px_30px_color-mix(in_oklch,var(--primary),transparent_85%)] focus-within:-translate-y-1
               "
               >
                 <textarea
@@ -897,32 +896,34 @@ export default function ChatPage() {
                   disabled={isStreaming}
                   rows={1}
                   className="
-                  flex-1 resize-none rounded-xl
-                  bg-transparent px-3.5 py-2.5 text-sm
-                  placeholder:text-muted-foreground/50
+                  flex-1 resize-none rounded-2xl
+                  bg-transparent px-4 py-3 text-sm
+                  placeholder:text-muted-foreground/40
                   focus:outline-none
                   disabled:opacity-50 transition-all
                   max-h-40 scrollbar-thin
+                  leading-relaxed
                 "
                 />
                 <Button
                   onClick={() => sendMessage()}
                   disabled={!input.trim() || isStreaming}
                   size="icon"
-                  className="
-                  h-10 w-10 rounded-xl shrink-0
-                  disabled:opacity-20 disabled:bg-muted
-                  transition-all duration-200
-                "
+                  className={`
+                  h-10 w-10 rounded-full shrink-0 flex items-center justify-center
+                  transition-all duration-300
+                  ${input.trim() && !isStreaming ? "hover:scale-105 active:scale-95" : "opacity-40 bg-muted cursor-not-allowed"}
+                `}
                   style={
                     input.trim() && !isStreaming
                       ? {
                         background:
-                          "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 15%) 100%)",
+                          "linear-gradient(135deg, var(--primary) 0%, color-mix(in oklch, var(--primary), black 20%) 100%)",
                         boxShadow:
-                          "0 4px 12px color-mix(in oklch, var(--primary), transparent 60%)",
+                          "0 4px 15px color-mix(in oklch, var(--primary), transparent 50%)",
+                        color: "var(--primary-foreground)",
                       }
-                      : undefined
+                      : { color: "var(--foreground)" }
                   }
                 >
                   {isStreaming ? (
