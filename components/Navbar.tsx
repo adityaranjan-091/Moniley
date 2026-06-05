@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 // Shadcn UI Imports
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { SidebarTrigger } from "@/components/ui/sidebar"; // Import Trigger
+import { SidebarTrigger } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -47,7 +47,7 @@ export default function Navbar() {
           <Link href="/dashboard" className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
               <Image
-                src="/fin-logo.png"
+                src="/logo.png"
                 alt="Moniley Logo"
                 width={28}
                 height={28}
