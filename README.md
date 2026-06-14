@@ -29,7 +29,6 @@
 
 **Moniley** is a full-stack personal finance management application built with **Next.js 16** and powered by **Google's Gemini AI**. It provides a modern, responsive dashboard where users can track income and expenses, manage budgets, set savings goals, generate financial reports, and chat with an AI financial advisor that has real-time access to their financial data.
 
-> **Status:** Currently in Beta
 
 ---
 
@@ -124,30 +123,6 @@
 
 ---
 
-
-l
-├── Context/
-│   ├── FirebaseAuthProvider.tsx       # Firebase auth context & hooks
-│   └── Providers.tsx                  # Theme + Auth provider wrapper
-├── hooks/
-│   ├── use-auth.ts                    # useAuth() hook
-│   └── use-mobile.ts                  # Responsive breakpoint hook
-├── lib/
-│   ├── firebase.ts                    # Firebase app initialization
-│   ├── mongodb.js                     # MongoDB client singleton
-│   ├── types.ts                       # Shared TypeScript types
-│   └── utils.ts                       # Utility functions (cn, etc.)
-├── public/
-│   ├── logo.png                       # App logo
-│   └── auth-bg.png                    # Auth page background image
-├── Dockerfile                         # Multi-stage Docker build
-├── docker-compose.yml                 # Docker Compose config
-├── next.config.ts                     # Next.js configuration
-├── tailwind.config.js                 # Tailwind CSS configuration
-└── tsconfig.json                      # TypeScript configuration
-```
-
----
 
 ## Getting Started
 
