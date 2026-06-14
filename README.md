@@ -10,6 +10,7 @@
   <img src="https://img.shields.io/badge/Firebase-Auth-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase" />
   <img src="https://img.shields.io/badge/Gemini_AI-2.5_Flash-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini AI" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Docker-ready-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
 </p>
 
 <h1 align="center">Moniley</h1>
@@ -86,7 +87,7 @@
 - **Email/Password** sign up & sign in
 - **Google Sign-In** via Firebase Auth
 - Password reset functionality
-- Protected routes with auth gate middleware
+- Protected routes with `AuthGate` component
 
 ### Design & UX
 - **Dark/Light mode** with smooth transitions
@@ -113,9 +114,12 @@
 | **Database** | [MongoDB 7](https://mongodb.com) (MongoDB Atlas) |
 | **AI / LLM** | [Google Gemini 2.5 Flash](https://ai.google.dev) via `@google/genai` |
 | **PDF Generation** | [jsPDF](https://github.com/parallax/jsPDF) + [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable) |
+| **Date Utilities** | [date-fns](https://date-fns.org) |
+| **Password Hashing** | [bcryptjs](https://github.com/dcodeIO/bcrypt.js) |
 | **Icons** | [Lucide React](https://lucide.dev) |
 | **Theme** | [next-themes](https://github.com/pacocoursey/next-themes) |
 | **Animations** | [tw-animate-css](https://github.com/Wombosvideo/tw-animate-css) |
+| **Containerization** | Docker + Docker Compose |
 
 ---
 
@@ -124,61 +128,121 @@
 ```text
 Moniley/
 ├── app/
-│   ├── (auth)/                    # Auth route group
-│   │   ├── login/                 # Login page
-│   │   ├── signup/                # Signup page
-│   │   └── layout.tsx             # Split-screen auth layout
-│   ├── (main)/                    # Protected route group
-│   │   ├── dashboard/             # Financial dashboard
-│   │   ├── income/                # Income tracking
-│   │   ├── expense/               # Expense tracking
-│   │   ├── categories/            # Category management
-│   │   ├── budgets/               # Budget management
-│   │   ├── goals/                 # Savings goals
-│   │   ├── reports/               # Reports & analytics
-│   │   ├── chat/                  # AI Financial Advisor
-│   │   ├── profile/               # User profile
-│   │   ├── settings/              # Settings (General, Security, etc.)
-│   │   └── layout.tsx             # Sidebar + Navbar layout
+│   ├── (auth)/                        # Auth route group
+│   │   ├── login/
+│   │   │   └── page.tsx               # Login page
+│   │   ├── signup/
+│   │   │   └── page.tsx               # Signup page
+│   │   └── layout.tsx                 # Split-screen auth layout
+│   ├── (main)/                        # Protected route group
+│   │   ├── dashboard/
+│   │   │   └── page.tsx               # Financial dashboard
+│   │   ├── income/
+│   │   │   └── page.tsx               # Income tracking
+│   │   ├── expense/
+│   │   │   └── page.tsx               # Expense tracking (AI Smart Entry)
+│   │   ├── categories/
+│   │   │   └── page.tsx               # Category management
+│   │   ├── budgets/
+│   │   │   └── page.tsx               # Budget management
+│   │   ├── goals/
+│   │   │   └── page.tsx               # Savings goals
+│   │   ├── reports/
+│   │   │   └── page.tsx               # Reports & analytics
+│   │   ├── chat/
+│   │   │   └── page.tsx               # AI Financial Advisor
+│   │   ├── profile/
+│   │   │   └── page.tsx               # User profile
+│   │   ├── settings/
+│   │   │   ├── general/
+│   │   │   │   └── page.tsx           # Theme & appearance settings
+│   │   │   ├── notifications/
+│   │   │   │   └── page.tsx           # Notification preferences
+│   │   │   ├── security/
+│   │   │   │   └── page.tsx           # Password change & account deletion
+│   │   │   ├── data/
+│   │   │   │   └── page.tsx           # Data export options
+│   │   │   ├── layout.tsx             # Settings sidebar layout
+│   │   │   └── page.tsx               # Settings index (redirects)
+│   │   └── layout.tsx                 # Sidebar + Navbar layout
 │   ├── api/
-│   │   ├── auth/                  # Auth API routes
-│   │   ├── dashboard/             # Dashboard data aggregation
-│   │   ├── transactions/          # CRUD for income/expenses
-│   │   ├── categories/            # CRUD for categories
-│   │   ├── budgets/               # CRUD for budgets
-│   │   ├── reports/               # Report generation
-│   │   ├── income/                # Income-specific endpoints
-│   │   ├── profile/               # User profile API
-│   │   ├── settings/              # Settings API
-│   │   ├── chat/                  # AI chat (streaming + RAG)
-│   │   │   ├── route.js           # Gemini streaming endpoint
-│   │   │   └── history/           # Conversation history CRUD
-│   │   ├── smart-categorize/      # AI transaction categorization
-│   │   └── register/              # User registration
-│   ├── globals.css                # Design tokens & theme
-│   ├── layout.tsx                 # Root layout (Poppins font)
-│   └── page.tsx                   # Landing page
+│   │   ├── dashboard/
+│   │   │   └── route.js               # Dashboard data aggregation
+│   │   ├── transactions/
+│   │   │   └── route.js               # CRUD for income/expenses
+│   │   ├── categories/
+│   │   │   └── route.js               # CRUD for categories
+│   │   ├── budgets/
+│   │   │   └── route.js               # CRUD for budgets
+│   │   ├── goals/
+│   │   │   └── route.js               # CRUD for savings goals
+│   │   ├── reports/
+│   │   │   └── route.js               # Report generation
+│   │   ├── income/                    # Income-specific endpoint (reserved)
+│   │   ├── profile/
+│   │   │   └── route.js               # User profile API
+│   │   ├── settings/
+│   │   │   ├── data/
+│   │   │   │   └── route.js           # Data export API
+│   │   │   └── route.js               # Settings API
+│   │   ├── chat/
+│   │   │   ├── route.js               # Gemini streaming endpoint (SSE + RAG)
+│   │   │   └── history/
+│   │   │       └── route.js           # Conversation history CRUD
+│   │   └── smart-categorize/
+│   │       └── route.js               # AI transaction categorization
+│   ├── globals.css                    # Design tokens & theme (oklch)
+│   ├── layout.tsx                     # Root layout (Poppins font)
+│   └── page.tsx                       # Landing page
 ├── components/
-│   ├── AppSidebar.tsx             # Main navigation sidebar
-│   ├── Navbar.tsx                 # Top navbar with search & profile
-│   ├── ThemeToggle.tsx            # Dark/Light mode switch
-│   ├── auth/                      # Auth components (AuthGate, etc.)
-│   ├── Budgets/                   # Budget-related components
-│   ├── Categories/                # Category-related components
-│   ├── Goals/                     # Goal cards & modals
-│   └── ui/                        # shadcn/ui primitives
+│   ├── AppSidebar.tsx                 # Main navigation sidebar
+│   ├── Navbar.tsx                     # Top navbar with search & profile
+│   ├── ThemeToggle.tsx                # Dark/Light mode switch
+│   ├── auth/
+│   │   └── AuthGate.tsx               # Auth guard component
+│   ├── Budgets/
+│   │   └── AddBudgetModal.tsx         # Budget creation modal
+│   ├── Categories/
+│   │   └── AddCategoryModal.tsx       # Category creation modal
+│   ├── Goals/
+│   │   ├── AddGoalModal.tsx           # Goal creation modal
+│   │   └── GoalCard.tsx               # Individual goal display card
+│   └── ui/                            # shadcn/ui primitives
+│       ├── alert-dialog.tsx
+│       ├── avatar.tsx
+│       ├── button.tsx
+│       ├── card.tsx
+│       ├── dialog.tsx
+│       ├── dropdown-menu.tsx
+│       ├── input.tsx
+│       ├── label.tsx
+│       ├── progress.tsx
+│       ├── select.tsx
+│       ├── separator.tsx
+│       ├── sheet.tsx
+│       ├── sidebar.tsx
+│       ├── skeleton.tsx
+│       ├── switch.tsx
+│       └── tooltip.tsx
 ├── Context/
-│   ├── FirebaseAuthProvider.tsx   # Firebase auth context & hooks
-│   └── Providers.jsx              # Theme + Auth provider wrapper
+│   ├── FirebaseAuthProvider.tsx       # Firebase auth context & hooks
+│   └── Providers.tsx                  # Theme + Auth provider wrapper
 ├── hooks/
-│   ├── use-auth.ts                # useAuth() hook
-│   └── use-mobile.ts              # Responsive breakpoint hook
+│   ├── use-auth.ts                    # useAuth() hook
+│   └── use-mobile.ts                  # Responsive breakpoint hook
 ├── lib/
-│   ├── firebase.ts                # Firebase app initialization
-│   ├── mongodb.js                 # MongoDB client singleton
-│   ├── types.ts                   # Shared TypeScript types
-│   └── utils.ts                   # Utility functions (cn, etc.)
-└── public/                        # Static assets
+│   ├── firebase.ts                    # Firebase app initialization
+│   ├── mongodb.js                     # MongoDB client singleton
+│   ├── types.ts                       # Shared TypeScript types
+│   └── utils.ts                       # Utility functions (cn, etc.)
+├── public/
+│   ├── logo.png                       # App logo
+│   └── auth-bg.png                    # Auth page background image
+├── Dockerfile                         # Multi-stage Docker build
+├── docker-compose.yml                 # Docker Compose config
+├── next.config.ts                     # Next.js configuration
+├── tailwind.config.js                 # Tailwind CSS configuration
+└── tsconfig.json                      # TypeScript configuration
 ```
 
 ---
@@ -187,7 +251,7 @@ Moniley/
 
 ### Prerequisites
 
-- **Node.js** 18+ 
+- **Node.js** 18+
 - **npm** or **yarn**
 - A **MongoDB Atlas** cluster (or local MongoDB instance)
 - A **Firebase** project with Authentication enabled
@@ -211,10 +275,10 @@ npm install
 Create a `.env.local` file in the root directory:
 
 ```env
-# MongoDB 
+# MongoDB
 MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<dbname>
 
-# Firebase 
+# Firebase
 NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
@@ -223,7 +287,7 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
 
-# Google Gemini AI 
+# Google Gemini AI
 GEMINI_API_KEY=your_gemini_api_key
 ```
 
@@ -241,6 +305,26 @@ Open [http://localhost:3000](http://localhost:3000) to see the app.
 npm run build
 npm start
 ```
+
+---
+
+## Docker Deployment
+
+Moniley ships with a multi-stage `Dockerfile` and a `docker-compose.yml` for easy containerized deployment.
+
+### Using Docker Compose
+
+```bash
+# Build and run the container
+docker compose up --build
+
+# Run in detached mode
+docker compose up --build -d
+```
+
+The app will be available at [http://localhost:3000](http://localhost:3000).
+
+> **Note:** Firebase `NEXT_PUBLIC_*` variables are baked into the JS bundle at build time. Pass them as `--build-arg` flags or in your `.env` file before building.
 
 ---
 
@@ -262,11 +346,11 @@ The AI chatbot uses a **Retrieval-Augmented Generation (RAG)** pattern:
                     └──────────────────┘     └─────────────────┘
 ```
 
-**Context includes:** Monthly income/expenses, savings rate, budget status, expense breakdown, savings goals, recent transactions, and configured categories - all fetched in real-time from MongoDB.
+**Context includes:** Monthly income/expenses, savings rate, budget status, expense breakdown, savings goals, recent transactions, and configured categories — all fetched in real-time from MongoDB.
 
 ### Smart Categorization
 
-Uses Gemini AI to parse natural language transaction descriptions into structured data (amount, category, date, description) with JSON-mode output.
+Uses Gemini AI to parse natural language transaction descriptions into structured data (amount, category, date, description) with JSON-mode output via `/api/smart-categorize`.
 
 ---
 
@@ -286,7 +370,29 @@ Uses Gemini AI to parse natural language transaction descriptions into structure
 | `/reports` | Monthly/Yearly reports with PDF export |
 | `/chat` | AI Financial Advisor chatbot |
 | `/profile` | User profile & account stats |
-| `/settings/*` | General, Notifications, Security, Data |
+| `/settings/general` | Theme & appearance preferences |
+| `/settings/notifications` | Notification preferences |
+| `/settings/security` | Password change & account deletion |
+| `/settings/data` | Data export options |
+
+---
+
+## API Routes
+
+| Route | Method | Description |
+|---|---|---|
+| `/api/dashboard` | `GET` | Aggregated financial snapshot |
+| `/api/transactions` | `GET`, `POST`, `DELETE` | Income & expense CRUD |
+| `/api/categories` | `GET`, `POST`, `DELETE` | Category CRUD |
+| `/api/budgets` | `GET`, `POST`, `DELETE` | Budget CRUD |
+| `/api/goals` | `GET`, `POST`, `DELETE` | Savings goals CRUD |
+| `/api/reports` | `GET` | Monthly/yearly report data |
+| `/api/profile` | `GET`, `PATCH` | User profile read/update |
+| `/api/settings` | `GET`, `PATCH` | General settings |
+| `/api/settings/data` | `GET` | Data export |
+| `/api/chat` | `POST` | Gemini streaming chat (SSE) |
+| `/api/chat/history` | `GET`, `POST`, `DELETE` | Conversation history CRUD |
+| `/api/smart-categorize` | `POST` | AI-powered transaction parsing |
 
 ---
 
