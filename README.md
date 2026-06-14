@@ -100,6 +100,7 @@
 
 ---
 
+
 ## Tech Stack
 
 | Layer | Technology |
@@ -123,107 +124,8 @@
 
 ---
 
-## Project Structure
 
-```text
-Moniley/
-├── app/
-│   ├── (auth)/                        # Auth route group
-│   │   ├── login/
-│   │   │   └── page.tsx               # Login page
-│   │   ├── signup/
-│   │   │   └── page.tsx               # Signup page
-│   │   └── layout.tsx                 # Split-screen auth layout
-│   ├── (main)/                        # Protected route group
-│   │   ├── dashboard/
-│   │   │   └── page.tsx               # Financial dashboard
-│   │   ├── income/
-│   │   │   └── page.tsx               # Income tracking
-│   │   ├── expense/
-│   │   │   └── page.tsx               # Expense tracking (AI Smart Entry)
-│   │   ├── categories/
-│   │   │   └── page.tsx               # Category management
-│   │   ├── budgets/
-│   │   │   └── page.tsx               # Budget management
-│   │   ├── goals/
-│   │   │   └── page.tsx               # Savings goals
-│   │   ├── reports/
-│   │   │   └── page.tsx               # Reports & analytics
-│   │   ├── chat/
-│   │   │   └── page.tsx               # AI Financial Advisor
-│   │   ├── profile/
-│   │   │   └── page.tsx               # User profile
-│   │   ├── settings/
-│   │   │   ├── general/
-│   │   │   │   └── page.tsx           # Theme & appearance settings
-│   │   │   ├── notifications/
-│   │   │   │   └── page.tsx           # Notification preferences
-│   │   │   ├── security/
-│   │   │   │   └── page.tsx           # Password change & account deletion
-│   │   │   ├── data/
-│   │   │   │   └── page.tsx           # Data export options
-│   │   │   ├── layout.tsx             # Settings sidebar layout
-│   │   │   └── page.tsx               # Settings index (redirects)
-│   │   └── layout.tsx                 # Sidebar + Navbar layout
-│   ├── api/
-│   │   ├── dashboard/
-│   │   │   └── route.js               # Dashboard data aggregation
-│   │   ├── transactions/
-│   │   │   └── route.js               # CRUD for income/expenses
-│   │   ├── categories/
-│   │   │   └── route.js               # CRUD for categories
-│   │   ├── budgets/
-│   │   │   └── route.js               # CRUD for budgets
-│   │   ├── goals/
-│   │   │   └── route.js               # CRUD for savings goals
-│   │   ├── reports/
-│   │   │   └── route.js               # Report generation
-│   │   ├── income/                    # Income-specific endpoint (reserved)
-│   │   ├── profile/
-│   │   │   └── route.js               # User profile API
-│   │   ├── settings/
-│   │   │   ├── data/
-│   │   │   │   └── route.js           # Data export API
-│   │   │   └── route.js               # Settings API
-│   │   ├── chat/
-│   │   │   ├── route.js               # Gemini streaming endpoint (SSE + RAG)
-│   │   │   └── history/
-│   │   │       └── route.js           # Conversation history CRUD
-│   │   └── smart-categorize/
-│   │       └── route.js               # AI transaction categorization
-│   ├── globals.css                    # Design tokens & theme (oklch)
-│   ├── layout.tsx                     # Root layout (Poppins font)
-│   └── page.tsx                       # Landing page
-├── components/
-│   ├── AppSidebar.tsx                 # Main navigation sidebar
-│   ├── Navbar.tsx                     # Top navbar with search & profile
-│   ├── ThemeToggle.tsx                # Dark/Light mode switch
-│   ├── auth/
-│   │   └── AuthGate.tsx               # Auth guard component
-│   ├── Budgets/
-│   │   └── AddBudgetModal.tsx         # Budget creation modal
-│   ├── Categories/
-│   │   └── AddCategoryModal.tsx       # Category creation modal
-│   ├── Goals/
-│   │   ├── AddGoalModal.tsx           # Goal creation modal
-│   │   └── GoalCard.tsx               # Individual goal display card
-│   └── ui/                            # shadcn/ui primitives
-│       ├── alert-dialog.tsx
-│       ├── avatar.tsx
-│       ├── button.tsx
-│       ├── card.tsx
-│       ├── dialog.tsx
-│       ├── dropdown-menu.tsx
-│       ├── input.tsx
-│       ├── label.tsx
-│       ├── progress.tsx
-│       ├── select.tsx
-│       ├── separator.tsx
-│       ├── sheet.tsx
-│       ├── sidebar.tsx
-│       ├── skeleton.tsx
-│       ├── switch.tsx
-│       └── tooltip.tsx
+l
 ├── Context/
 │   ├── FirebaseAuthProvider.tsx       # Firebase auth context & hooks
 │   └── Providers.tsx                  # Theme + Auth provider wrapper
