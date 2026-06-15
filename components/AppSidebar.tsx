@@ -13,6 +13,7 @@ import {
   BarChart,
   Target,
   Bot,
+  Upload,
 } from "lucide-react";
 
 import {
@@ -37,6 +38,7 @@ const navItems = [
   { name: "Reports", href: "/reports", icon: BarChart },
   { name: "Goals", href: "/goals", icon: Target },
   { name: "AI Advisor", href: "/chat", icon: Bot },
+  { name: "Import", href: "/import", icon: Upload },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
