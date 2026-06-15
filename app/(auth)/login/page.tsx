@@ -70,10 +70,6 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col items-center text-center">
-      {/* Logo — visible on mobile only (desktop uses layout logo) */}
-      <div className="mb-6 flex items-center justify-center gap-2 lg:hidden">
-        <Image src="/logo.png" alt="Moniley" width={32} height={32} className="h-8 w-auto" />
-      </div>
 
       {/* Heading */}
       <h1 className="text-2xl font-bold text-foreground mb-1">Welcome back</h1>

@@ -113,13 +113,9 @@ export default function SignupPage(): JSX.Element {
 
   return (
     <div className="flex flex-col items-center text-center">
-      {/* Logo — mobile only */}
-      <div className="mb-6 flex items-center justify-center gap-2 lg:hidden">
-        <Image src="/logo.png" alt="Moniley" width={32} height={32} className="h-8 w-auto" />
-      </div>
 
       {/* Heading */}
-      <h1 className="text-2xl font-bold text-foreground mb-1">Create account</h1>
+      <h1 className="text-2xl font-bold text-foreground mb-1 mt-3">Create account</h1>
       <p className="text-sm text-muted-foreground mb-7">Join Moniley and take control of your finances</p>
 
       {/* Social Auth Buttons */}

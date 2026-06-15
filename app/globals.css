@@ -244,3 +244,73 @@
     max-width: 100%;
   }
 }
+
+/* =================================================================
+   AUTH LAYOUT ANIMATIONS
+   ================================================================= */
+
+/* Floating card — gentle vertical hover */
+@keyframes auth-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.auth-float-card {
+  animation: auth-float 6s ease-in-out infinite;
+}
+
+/* Sparkline endpoint pulse */
+@keyframes auth-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes auth-pulse-expand {
+  0% { r: 3; opacity: 0.4; }
+  100% { r: 10; opacity: 0; }
+}
+
+.auth-pulse-dot {
+  animation: auth-pulse 2s ease-in-out infinite;
+}
+
+.auth-pulse-ring {
+  animation: auth-pulse-expand 2s ease-out infinite;
+}
+
+/* Orb drift animations */
+@keyframes auth-orb-drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-15px, 10px) scale(1.05); }
+  66% { transform: translate(10px, -8px) scale(0.97); }
+}
+
+@keyframes auth-orb-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(12px, -12px) scale(0.95); }
+  66% { transform: translate(-8px, 8px) scale(1.03); }
+}
+
+.auth-orb-1 {
+  animation: auth-orb-drift-1 12s ease-in-out infinite;
+}
+
+.auth-orb-2 {
+  animation: auth-orb-drift-2 15s ease-in-out infinite;
+}
+
+/* Marketing panel entrance */
+.auth-marketing-panel {
+  animation: auth-panel-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes auth-panel-in {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
