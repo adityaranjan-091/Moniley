@@ -24,41 +24,48 @@ export async function GET(req) {
             ];
         }
 
-        // Dates for Monthly Stats
+        // Dates for Monthly Stats (use UTC to match how transaction dates are stored)
+        // Transaction dates from date-only strings (e.g. "2026-06-18") are parsed as UTC midnight,
+        // so we must compare using UTC boundaries to avoid timezone-related mismatches.
         const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        const startOfMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1));
+        const endOfMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999));
 
-        // Fetch Transactions with Filter
-        const allTransactions = await db.collection("transactions")
-            .find(query)
+        // Fetch ALL transactions for this user (without search filter) for balance calculation
+        const allTransactionsForBalance = await db.collection("transactions")
+            .find({ userId })
             .sort({ date: -1 })
             .toArray();
 
-        // 1. Total Balance (All Time)
-        const totalIncome = allTransactions
-            .filter(t => t.type === 'income')
-            .reduce((sum, t) => sum + t.amount, 0);
+        // Fetch transactions with search filter for display purposes
+        const allTransactions = search
+            ? await db.collection("transactions").find(query).sort({ date: -1 }).toArray()
+            : allTransactionsForBalance;
 
-        const totalExpense = allTransactions
+        // 1. Total Balance (All Time - should NOT be affected by search filter)
+        const totalIncome = allTransactionsForBalance
+            .filter(t => t.type === 'income')
+            .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
+
+        const totalExpense = allTransactionsForBalance
             .filter(t => t.type === 'expense')
-            .reduce((sum, t) => sum + t.amount, 0);
+            .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
 
         const totalBalance = totalIncome - totalExpense;
 
-        // 2. Monthly Stats
-        const monthlyTransactions = allTransactions.filter(t => {
+        // 2. Monthly Stats (from ALL transactions, not filtered by search)
+        const monthlyTransactions = allTransactionsForBalance.filter(t => {
             const d = new Date(t.date);
             return d >= startOfMonth && d <= endOfMonth;
         });
 
         const monthlyIncome = monthlyTransactions
             .filter(t => t.type === 'income')
-            .reduce((sum, t) => sum + t.amount, 0);
+            .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
 
         const monthlyExpense = monthlyTransactions
             .filter(t => t.type === 'expense')
-            .reduce((sum, t) => sum + t.amount, 0);
+            .reduce((sum, t) => sum + (Number(t.amount) || 0), 0);
 
         const netSavings = monthlyIncome - monthlyExpense;
 
@@ -68,7 +75,7 @@ export async function GET(req) {
             .filter(t => t.type === 'expense')
             .forEach(t => {
                 const cat = t.category || "Uncategorized";
-                expenseMap[cat] = (expenseMap[cat] || 0) + t.amount;
+                expenseMap[cat] = (expenseMap[cat] || 0) + (Number(t.amount) || 0);
             });
 
         // Convert Map to Array for Recharts
