@@ -58,11 +58,11 @@ export default function GoalsPage() {
         if (json.success) {
           const transactions = json.transactions;
           const income = transactions
-            .filter((t: any) => t.type === "income")
-            .reduce((sum: number, t: any) => sum + t.amount, 0);
+            .filter((t: { type: string; amount: number }) => t.type === "income")
+            .reduce((sum: number, t: { type: string; amount: number }) => sum + t.amount, 0);
           const expense = transactions
-            .filter((t: any) => t.type === "expense")
-            .reduce((sum: number, t: any) => sum + t.amount, 0);
+            .filter((t: { type: string; amount: number }) => t.type === "expense")
+            .reduce((sum: number, t: { type: string; amount: number }) => sum + t.amount, 0);
 
           setCurrentSavings(income - expense);
         }

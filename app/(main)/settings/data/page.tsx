@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Download, Trash2, AlertTriangle, FileText } from "lucide-react";
+import { Download, AlertTriangle, FileText } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +21,6 @@ import { useAuth } from "@/hooks/use-auth";
 export default function DataSettingsPage() {
   const { user, deleteCurrentUser } = useAuth();
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
 
   const handleExportCSV = async () => {
     try {
@@ -33,8 +32,8 @@ export default function DataSettingsPage() {
 
       if (json.success && json.transactions) {
         const headers = ["Date", "Description", "Category", "Type", "Amount"];
-        const escapeCsv = (val: any) => `"${String(val || "").replace(/"/g, '""')}"`;
-        const rows = json.transactions.map((t: any) => [
+        const escapeCsv = (val: string | number | null | undefined) => `"${String(val || "").replace(/"/g, '""')}"`;
+        const rows = json.transactions.map((t: { date?: string; createdAt?: string; description?: string; category?: string; type?: string; amount: number }) => [
           escapeCsv(t.date ? new Date(t.date).toLocaleDateString() : (t.createdAt ? new Date(t.createdAt).toLocaleDateString() : "")),
           escapeCsv(t.description),
           escapeCsv(t.category),
@@ -44,7 +43,7 @@ export default function DataSettingsPage() {
 
         const csvContent = [
           headers.join(","),
-          ...rows.map((row: any[]) => row.join(",")),
+          ...rows.map((row: (string | number)[]) => row.join(",")),
         ].join("\n");
 
         const blob = new Blob([csvContent], {

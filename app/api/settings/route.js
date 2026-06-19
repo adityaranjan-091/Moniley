@@ -17,7 +17,7 @@ export async function PATCH(req) {
         if (notifications) updateDoc.notifications = notifications;
         if (general) updateDoc.general = general;
 
-        const result = await db.collection("users").updateOne(
+        const _result = await db.collection("users").updateOne(
             { email: userId },
             { $set: { settings: updateDoc } },
             { upsert: true } // Create if not exists logic might need refinement depending on Auth

@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 type AddCategoryModalProps = {
     isOpen: boolean;
     onClose: () => void;
-    onAdd: (category: any) => void;
+    onAdd: (category: { name: string; color: string; icon: string }) => void;
     type: "income" | "expense";
 };
 

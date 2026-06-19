@@ -6,8 +6,8 @@ export interface User {
   name?: string;
   image?: string;
   settings?: {
-    notifications?: any;
-    general?: any;
+    notifications?: Record<string, boolean>;
+    general?: Record<string, string | boolean>;
   };
   createdAt?: Date;
   updatedAt?: Date;

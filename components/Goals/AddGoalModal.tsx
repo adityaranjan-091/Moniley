@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 type AddGoalModalProps = {
     isOpen: boolean;
     onClose: () => void;
-    onAdd: (goal: any) => void;
+    onAdd: (goal: { id: string; name: string; targetAmount: number; category: string; deadline: string }) => void;
 };
 
 export default function AddGoalModal({ isOpen, onClose, onAdd }: AddGoalModalProps) {

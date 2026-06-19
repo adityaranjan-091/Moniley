@@ -58,7 +58,7 @@ interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
     items: {
         href: string;
         title: string;
-        icon: any;
+        icon: React.ComponentType<{ className?: string }>;
     }[];
 }
 
