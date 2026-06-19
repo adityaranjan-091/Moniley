@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
     Dialog,
     DialogContent,
@@ -37,13 +37,13 @@ export default function AddBudgetModal({
     const [amount, setAmount] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // Reset form when opening
-    useEffect(() => {
-        if (isOpen) {
+    const handleOpenChange = (open: boolean) => {
+        if (open) {
             setCategory("");
             setAmount("");
         }
-    }, [isOpen]);
+        if (!open) onClose();
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -56,7 +56,7 @@ export default function AddBudgetModal({
     };
 
     return (
-        <Dialog open={isOpen} onOpenChange={onClose}>
+        <Dialog open={isOpen} onOpenChange={handleOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
                     <DialogTitle>Set Monthly Budget</DialogTitle>

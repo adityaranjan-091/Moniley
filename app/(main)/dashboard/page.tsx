@@ -7,7 +7,6 @@ import {
   TrendingUp,
   TrendingDown,
   PiggyBank,
-  MoreHorizontal,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -188,8 +187,8 @@ export default function DashboardPage() {
                       ))}
                     </Pie>
                     <Tooltip
-                      formatter={(value: any) =>
-                        `₹${Number(value)?.toLocaleString() ?? 0}`
+                      formatter={(value) =>
+                        `₹${Number(value || 0).toLocaleString()}`
                       }
                     />
                     <Legend />

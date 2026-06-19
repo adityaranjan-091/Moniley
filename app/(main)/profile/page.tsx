@@ -27,7 +27,14 @@ export default function ProfilePage() {
   const { user, loading: authLoading, updateDisplayName } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<{
+    name?: string;
+    email: string;
+    image?: string;
+    memberSince: string;
+    transactionCount: number;
+    budgetCount: number;
+  } | null>(null);
   const [name, setName] = useState("");
 
   useEffect(() => {
@@ -73,7 +80,7 @@ export default function ProfilePage() {
       });
       if (res.ok) {
         await updateDisplayName(name);
-        setProfile((prev: any) => (prev ? { ...prev, name } : prev));
+        setProfile((prev) => (prev ? { ...prev, name } : prev));
         alert("Profile updated!");
       }
     } catch (error) {

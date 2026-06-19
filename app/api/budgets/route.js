@@ -77,7 +77,7 @@ export async function POST(req) {
         const categoryId = existingCategory ? existingCategory._id : null;
 
         // Upsert Budget
-        const result = await db.collection("budgets").updateOne(
+        const _result = await db.collection("budgets").updateOne(
             { userId, category }, // Keeping category in query for backwards compatibility on upsert
             {
                 $set: {

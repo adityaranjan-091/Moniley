@@ -49,7 +49,7 @@ Ensure your response is valid JSON and nothing else. Do not use markdown wrapper
             let resultData;
             try {
                 resultData = JSON.parse(response.text);
-            } catch (e) {
+            } catch (_e) {
                 console.error("Gemini parse err. Text:", response.text);
                 return NextResponse.json({ success: false, message: "Failed to parse API response" }, { status: 500 });
             }

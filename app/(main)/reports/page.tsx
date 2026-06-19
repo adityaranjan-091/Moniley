@@ -22,9 +22,7 @@ import {
   Download,
   TrendingUp,
   TrendingDown,
-  Wallet,
   PiggyBank,
-  Calendar,
   ArrowUpRight,
   ArrowDownRight,
   Receipt,
@@ -180,7 +178,7 @@ export default function ReportsPage() {
 
     // Expense Breakdown
     if (data.categoryBreakdown?.length > 0) {
-      const finalY = (doc as any).lastAutoTable?.finalY || 90;
+      const finalY = (doc as jsPDF & { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY || 90;
       doc.setFontSize(14);
       doc.text("Expense Breakdown", 14, finalY + 12);
 
@@ -198,7 +196,7 @@ export default function ReportsPage() {
 
     // Top Expenses
     if (data.topTransactions?.length > 0) {
-      const finalY = (doc as any).lastAutoTable?.finalY || 140;
+      const finalY = (doc as jsPDF & { lastAutoTable?: { finalY: number } }).lastAutoTable?.finalY || 140;
       doc.setFontSize(14);
       doc.text("Top Expenses", 14, finalY + 12);
 
@@ -503,8 +501,8 @@ export default function ReportsPage() {
                             "0 4px 12px -2px rgb(0 0 0 / 0.1)",
                           fontSize: "13px",
                         }}
-                        formatter={(value: any) => [
-                          `₹${Number(value).toLocaleString()}`,
+                        formatter={(value) => [
+                          `₹${Number(value || 0).toLocaleString()}`,
                         ]}
                       />
                       <Legend />
@@ -588,8 +586,8 @@ export default function ReportsPage() {
                             "0 4px 12px -2px rgb(0 0 0 / 0.1)",
                           fontSize: "13px",
                         }}
-                        formatter={(value: any) => [
-                          `₹${Number(value).toLocaleString()}`,
+                        formatter={(value) => [
+                          `₹${Number(value || 0).toLocaleString()}`,
                         ]}
                       />
                       <Legend />

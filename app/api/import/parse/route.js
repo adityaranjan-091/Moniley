@@ -20,8 +20,8 @@ async function extractPdfText(buffer) {
  * Extract rows from CSV / Excel buffer using xlsx (SheetJS).
  * Returns a single string representation of all rows for Gemini.
  */
-function extractSpreadsheetText(buffer, fileName) {
-    const XLSX = require("xlsx");
+async function extractSpreadsheetText(buffer) {
+    const XLSX = await import("xlsx");
     const workbook = XLSX.read(buffer, { type: "buffer" });
 
     let allText = "";
@@ -92,7 +92,7 @@ export async function POST(req) {
             extractedText = await extractPdfText(buffer);
         } else {
             // csv or excel — both handled by xlsx
-            extractedText = extractSpreadsheetText(buffer, fileName);
+            extractedText = await extractSpreadsheetText(buffer);
         }
 
         if (!extractedText || extractedText.trim().length < 10) {
@@ -168,7 +168,7 @@ Return ONLY a valid JSON array. No markdown, no explanation. Example:
         let transactions;
         try {
             transactions = JSON.parse(response.text);
-        } catch (e) {
+        } catch (_e) {
             console.error("Failed to parse Gemini response:", response.text);
             return NextResponse.json(
                 {

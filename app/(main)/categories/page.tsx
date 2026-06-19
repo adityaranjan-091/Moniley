@@ -68,7 +68,7 @@ export default function CategoriesPage() {
     }
   }
 
-  const handleAddCategory = async (newCat: any) => {
+  const handleAddCategory = async (newCat: { name: string; color: string; icon: string }) => {
     try {
       const res = await fetch("/api/categories", {
         method: "POST",
